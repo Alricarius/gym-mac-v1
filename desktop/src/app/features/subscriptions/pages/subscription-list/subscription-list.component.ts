@@ -1,110 +1,100 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatCardModule } from '@angular/material/card';
 import { SubscriptionService, Subscription } from '../../services/subscription.service';
 
 @Component({
   selector: 'app-subscription-list',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    MatButtonModule, MatIconModule, MatPaginatorModule, MatCardModule,
+  ],
   template: `
     <div class="page">
       <div class="page-header">
         <h1>Suscripciones</h1>
-        <button class="btn-primary" (click)="create()">+ Nueva suscripción</button>
+        <button mat-raised-button color="primary" (click)="create()">
+          <mat-icon>add</mat-icon>
+          Nueva suscripción
+        </button>
       </div>
 
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Miembro</th>
-              <th>Plan</th>
-              <th>Inicio</th>
-              <th>Fin</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (sub of subscriptions(); track sub.id) {
-              <tr>
-                <td>{{ sub.member?.fullName ?? sub.memberId }}</td>
-                <td>{{ sub.plan?.name ?? sub.planId }}</td>
-                <td>{{ sub.startDate }}</td>
-                <td>{{ sub.endDate }}</td>
-                <td>
-                  <span [class]="'badge badge-' + sub.status">
-                    {{ statusLabel(sub.status) }}
-                  </span>
-                </td>
-                <td class="actions">
-                  @if (sub.status === 'active') {
-                    <button class="btn-sm btn-warning" (click)="pause(sub)">Pausar</button>
-                    <button class="btn-sm btn-danger" (click)="cancel(sub)">Cancelar</button>
-                  }
-                  @if (sub.status === 'paused') {
-                    <button class="btn-sm" (click)="resume(sub)">Reanudar</button>
-                    <button class="btn-sm btn-danger" (click)="cancel(sub)">Cancelar</button>
-                  }
-                  @if (sub.status === 'cancelled' || sub.status === 'expired') {
-                    <span class="no-actions">—</span>
-                  }
-                </td>
-              </tr>
-            } @empty {
-              <tr>
-                <td colspan="6" class="empty">No hay suscripciones registradas</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+      <mat-card class="!rounded-xl !shadow-sm">
+        <mat-card-content class="!p-6">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-gray-200">
+                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Miembro</th>
+                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Plan</th>
+                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Inicio</th>
+                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Fin</th>
+                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
+                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (sub of subscriptions(); track sub.id) {
+                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                    <td class="py-3 px-4 font-medium text-gray-800">{{ sub.member?.fullName ?? sub.memberId }}</td>
+                    <td class="py-3 px-4 text-gray-500">{{ sub.plan?.name ?? sub.planId }}</td>
+                    <td class="py-3 px-4 text-gray-500">{{ sub.startDate }}</td>
+                    <td class="py-3 px-4 text-gray-500">{{ sub.endDate }}</td>
+                    <td class="py-3 px-4">
+                      <span class="badge badge-{{ sub.status }}">
+                        {{ statusLabel(sub.status) }}
+                      </span>
+                    </td>
+                    <td class="py-3 px-4">
+                      @if (sub.status === 'active') {
+                        <button mat-stroked-button class="!mr-2" (click)="pause(sub)">
+                          <mat-icon>pause</mat-icon>
+                          Pausar
+                        </button>
+                        <button mat-stroked-button color="warn" (click)="cancel(sub)">Cancelar</button>
+                      }
+                      @if (sub.status === 'paused') {
+                        <button mat-stroked-button class="!mr-2" (click)="resume(sub)">
+                          <mat-icon>play_arrow</mat-icon>
+                          Reanudar
+                        </button>
+                        <button mat-stroked-button color="warn" (click)="cancel(sub)">Cancelar</button>
+                      }
+                      @if (sub.status === 'cancelled' || sub.status === 'expired') {
+                        <span class="text-gray-300">—</span>
+                      }
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="empty">No hay suscripciones registradas</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
 
-      @if (totalPages() > 1) {
-        <div class="pagination">
-          <button [disabled]="page() <= 1" (click)="goToPage(page() - 1)">Anterior</button>
-          <span>Página {{ page() }} de {{ totalPages() }}</span>
-          <button [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">Siguiente</button>
-        </div>
-      }
+          @if (totalPages() > 1) {
+            <mat-paginator class="!mt-4"
+              [length]="total()"
+              [pageSize]="20"
+              [pageIndex]="page() - 1"
+              [pageSizeOptions]="[10, 20, 50]"
+              (page)="onPageChange($event)"
+              showFirstLastButtons>
+            </mat-paginator>
+          }
 
-      @if (loading()) {
-        <div class="loading">Cargando...</div>
-      }
+          @if (loading()) {
+            <div class="loading">Cargando...</div>
+          }
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
-  styles: [`
-    .page { padding: 24px; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
-    .table-container { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow: hidden; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { padding: 12px 16px; text-align: left; font-size: 14px; }
-    th { background: #f8f9fc; color: #666; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
-    td { border-top: 1px solid #f0f0f0; }
-    .empty { text-align: center; color: #999; padding: 40px !important; }
-    .badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
-    .badge-active { background: #e8f5e9; color: #2e7d32; }
-    .badge-paused { background: #fff3e0; color: #e65100; }
-    .badge-cancelled { background: #fbe9e7; color: #c62828; }
-    .badge-expired { background: #f3e5f5; color: #6a1b9a; }
-    .actions { display: flex; gap: 8px; }
-    .no-actions { color: #ccc; }
-    .btn-sm { padding: 6px 14px; border: 1px solid #ddd; background: white; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; }
-    .btn-sm:hover { background: #f5f5f5; }
-    .btn-danger { color: #e74c3c; border-color: #e74c3c; }
-    .btn-danger:hover { background: #fdecea; }
-    .btn-warning { color: #e65100; border-color: #e65100; }
-    .btn-warning:hover { background: #fff3e0; }
-    .btn-primary { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover { background: #5a6fd6; }
-    .pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 20px; }
-    .pagination button { padding: 8px 16px; border: 1px solid #ddd; background: white; border-radius: 6px; cursor: pointer; }
-    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-    .pagination span { font-size: 14px; color: #666; }
-    .loading { text-align: center; color: #999; margin-top: 16px; }
-  `],
 })
 export class SubscriptionListComponent implements OnInit {
   private readonly subscriptionService = inject(SubscriptionService);
@@ -113,17 +103,17 @@ export class SubscriptionListComponent implements OnInit {
   readonly subscriptions = signal<Subscription[]>([]);
   readonly loading = signal(false);
   readonly page = signal(1);
+  readonly total = signal(0);
   readonly totalPages = signal(1);
 
-  ngOnInit(): void {
-    this.loadSubscriptions();
-  }
+  ngOnInit(): void { this.loadSubscriptions(); }
 
   loadSubscriptions(): void {
     this.loading.set(true);
     this.subscriptionService.findAll(undefined, this.page()).subscribe({
       next: (res) => {
         this.subscriptions.set(res.data);
+        this.total.set(res.meta.total);
         this.totalPages.set(res.meta.totalPages);
         this.loading.set(false);
       },
@@ -131,14 +121,12 @@ export class SubscriptionListComponent implements OnInit {
     });
   }
 
-  goToPage(p: number): void {
-    this.page.set(p);
+  onPageChange(e: PageEvent): void {
+    this.page.set(e.pageIndex + 1);
     this.loadSubscriptions();
   }
 
-  create(): void {
-    this.router.navigate(['/subscriptions/new']);
-  }
+  create(): void { this.router.navigate(['/subscriptions/new']); }
 
   pause(sub: Subscription): void {
     if (!confirm(`¿Pausar la suscripción de ${sub.member?.fullName ?? 'este miembro'}?`)) return;

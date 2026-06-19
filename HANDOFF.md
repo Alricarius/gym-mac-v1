@@ -1,6 +1,6 @@
 # Handoff — Gym Management System
 
-> Última actualización: 19/06/2026
+> Última actualización: 19/06/2026 — Iteración 6 completa (Dashboard + Reports + Pago integrado)
 
 ## Stack
 
@@ -48,7 +48,7 @@ cd desktop && pnpm start
 ### Credenciales
 - admin@admin.com / Admin123
 
-## Lo que está hecho (Iteración 1, 2, 3 y 4)
+## Lo que está hecho (Iteración 1, 2, 3, 4 y 5)
 
 ### Iteración 1 — Scaffold + Auth
 - Backend NestJS con módulos: Auth, Users, Common
@@ -107,6 +107,8 @@ cd desktop && pnpm start
 | `backend/src/modules/users/` | Users CRUD |
 | `backend/src/modules/members/` | Members CRUD con búsqueda |
 | `backend/src/modules/payments/` | Payment CRUD + recibo |
+| `backend/src/modules/check-in/` | Check-in con WebSocket |
+| `backend/src/modules/reports/` | Dashboard + Reportes (ingresos, miembros) |
 | `backend/src/database/migrations/` | Migraciones SQL |
 
 ### Frontend
@@ -120,6 +122,10 @@ cd desktop && pnpm start
 | `desktop/src/app/features/plans/` | Lista + formulario planes (nuevo) |
 | `desktop/src/app/features/subscriptions/` | Lista con acciones (pausar/reanudar/cancelar) + formulario crear (nuevo) |
 | `desktop/src/app/features/payments/` | Lista de pagos, formulario, recibo imprimible (nuevo) |
+| `desktop/src/app/features/check-in/` | Check-in con Socket.IO, panel de activos |
+| `desktop/src/app/features/dashboard/` | Dashboard con cards métricas + gráfico ingresos |
+| `desktop/src/app/features/reports/` | Reporte ingresos con filtro fechas + export CSV |
+| `desktop/src/app/core/services/socket.service.ts` | Cliente Socket.IO |
 | `desktop/src/app/core/interceptors/auth.interceptor.ts` | JWT interceptor con refresh |
 | `desktop/src/app/core/guards/auth.guard.ts` | authGuard, loginGuard |
 | `desktop/electron/main.ts` | Main process con retry para ng serve |
@@ -133,25 +139,65 @@ cd desktop && pnpm start
 4. **RouterLink faltante**: MainLayoutComponent no importaba RouterLink/RouterLinkActive, los links del sidebar no funcionaban
 5. **Seed duplicado**: Fallaba si ya existía el admin, se agregó try/catch
 
-## Siguiente paso (Iteración 5)
+### Iteración 5 — Check-in ✅ + UI Libraries
+- Backend: Módulo check-in con verificación de membresía, entry/exit, WebSocket en tiempo real
+  - `POST /api/v1/check-in`, `GET /check-in/verify/:memberId`, `GET /check-in/active`
+  - WebSocket Gateway con evento `check-in:updated`
+  - Migración: check_ins
+- Frontend: Pantalla de check-in con búsqueda de socio, panel de activos en tiempo real, Socket.IO
+- UI: Instalados Angular Material 18 + Tailwind CSS 3
+  - Sidebar migrado a `mat-toolbar` + `mat-nav-list` con íconos
+  - Tablas migradas a diseño Tailwind con `mat-paginator`
+  - Botones reemplazados por `mat-raised-button` / `mat-stroked-button`
+  - Formularios de búsqueda con `mat-form-field` + `matInput`
+  - Cards con `mat-card` en todas las páginas de listado
+  - Documentación en `docs/UI_LIBRARIES.md`
+  - Migración completa pendiente de formularios, diálogos y selectores para Iteración 10
 
-La próxima iteración sugerida según `docs/MVP_ROADMAP.md` es:
+### Iteración 6 — Dashboard + Reportes
+- Backend: Módulo reports con 3 endpoints agregados protegidos por JWT
+  - `GET /api/v1/reports/dashboard` — ingresos hoy, miembros activos, check-ins hoy, suscripciones activas, ingresos últimos 7 días
+  - `GET /api/v1/reports/income?from=&to=` — ingresos agrupados por día + total
+  - `GET /api/v1/reports/members` — miembros nuevos del mes, activos, cancelados
+- Frontend: Dashboard con 4 cards métricas + gráfico de barras CSS puro + panel resumen
+- Frontend: Página Reports con `mat-datepicker`, tabla de ingresos por día, botón exportar CSV
+- Sidebar: nuevo ítem "Reportes" con icono `bar_chart`
+- Fix error handling dashboard: loading spinner, error message con status + botón reintentar, `console.error`
 
-### Check-in
-- Backend: módulo `check-in` con verificación de membresía, registro entry/exit, WebSocket en tiempo real
-- Frontend: pantalla de check-in con búsqueda de miembro, panel de miembros activos con Socket.IO
+### Iteración 6.1 — Pago integrado al crear suscripción
+- Al crear una suscripción, el pago se registra automáticamente (obligatorio)
+- Formulario de suscripción: nueva sección "Datos de pago" con método (required), monto (prefijado con precio del plan), referencia y notas (opcional)
+- Backend: `SubscriptionsService.create()` crea Payment con `paidAt: new Date()` después de la suscripción
+- Payment form: campo `paidAt` prefijado con fecha/hora actual
+- Nueva documentación: `docs/FLUJO_PAGO.md`
 
-### Cómo empezar Iteración 5
+### Temas pendientes
+
+1. **Budget del bundle**: Angular Material aumentó el tamaño inicial a ~670 kB. Ajustar `maximumBudget` en `angular.json` o habilitar lazy loading de módulos Material. (Iteración 10)
+2. **confirm() nativos**: Varios componentes aún usan `confirm()` de JavaScript. Migrar a `mat-dialog`. (Iteración 10)
+3. **Formularios sin Material**: MemberForm, PlanForm, SubscriptionForm con pago, PaymentForm aún usan CSS custom. (Iteración 10)
+4. **Charts**: El gráfico de ingresos es CSS puro (barras). Si se necesita más sofisticación, instalar chart.js. (Iteración 10)
+
+## Siguiente paso (Iteración 7)
+
+La próxima iteración según `docs/MVP_ROADMAP.md` es:
+
+### Clases + Reservas
+- Backend: módulos `classes` (CRUD + horarios) y `bookings` (reservas con control de cupo)
+- Frontend: gestión de clases con horarios, calendario de reservas
+
+### Cómo empezar Iteración 7
 1. Leer `docs/MVP_ROADMAP.md` para endpoints exactos
-2. Seguir patrones de módulos existentes
-3. Backend: crear módulo check-in con entity, migration, service, controller, WebSocket gateway
-4. Frontend: crear feature con pages/services, socket.service, agregar rutas lazy-loaded
+2. Seguir patrones de módulos existentes (misma estructura DDD)
+3. Backend: crear entidades Class + Schedule + Booking con migraciones
+4. Frontend: crear features con lazy loading, actualizar sidebar
 
 ### Errores comunes al retomar
 - El backend puede crashear si PostgreSQL no está corriendo → revisar `docker ps`
 - Si cambia la entidad, crear nueva migración y ejecutar `pnpm migration:run`
 - `ng serve` puede no detectar cambios de archivos nuevos → reiniciar `pnpm start`
 - Si Electron no carga, esperar 10-15s (retry loop, hasta 30 intentos)
+- El puerto 3000 puede quedar ocupado → `lsof -ti:3000 | xargs kill -9`
 
 ## Variables de entorno (`.env`)
 

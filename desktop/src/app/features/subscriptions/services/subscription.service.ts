@@ -21,6 +21,10 @@ export interface CreateSubscriptionDto {
   memberId: string;
   planId: string;
   startDate?: string;
+  paymentMethod: 'cash' | 'card' | 'transfer';
+  paymentAmount?: number;
+  paymentReference?: string;
+  paymentNotes?: string;
 }
 
 export interface PaginatedResponse<T> {

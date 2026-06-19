@@ -116,6 +116,14 @@ export class PaymentFormComponent implements OnInit {
   error = '';
 
   ngOnInit(): void {
+    const now = new Date();
+    this.paidAtStr =
+      now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + 'T' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0');
+
     this.subscriptionService.findAll(undefined, 1, 100).subscribe({
       next: (res) => {
         this.subscriptions.set(res.data);

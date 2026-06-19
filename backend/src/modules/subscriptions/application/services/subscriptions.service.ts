@@ -7,12 +7,15 @@ import { Subscription, SubscriptionStatus } from '../../domain/entities/subscrip
 import { CreateSubscriptionDto } from '../dtos/create-subscription.dto';
 import { QuerySubscriptionDto } from '../dtos/query-subscription.dto';
 import { PlansService } from '../../../plans/application/services/plans.service';
+import { Payment } from '../../../payments/domain/entities/payment.entity';
 
 @Injectable()
 export class SubscriptionsService {
   constructor(
     @InjectRepository(Subscription)
     private readonly repo: Repository<Subscription>,
+    @InjectRepository(Payment)
+    private readonly paymentRepo: Repository<Payment>,
     private readonly plansService: PlansService,
   ) {}
 
@@ -39,7 +42,29 @@ export class SubscriptionsService {
       endDate,
     });
 
-    return this.repo.save(subscription);
+    const saved = await this.repo.save(subscription);
+
+    const amount = dto.paymentAmount ?? Number(plan.price);
+
+    if (amount <= 0) {
+      throw new BadRequestException('Payment amount must be greater than zero');
+    }
+
+    const now = new Date();
+    const payment = this.paymentRepo.create({
+      subscriptionId: saved.id,
+      memberId: dto.memberId,
+      amount,
+      method: dto.paymentMethod,
+      reference: dto.paymentReference,
+      notes: dto.paymentNotes,
+      paidAt: now,
+    });
+
+    await this.paymentRepo.save(payment);
+    await this.repo.update(saved.id, { lastPaymentAt: now });
+
+    return this.findById(saved.id);
   }
 
   async findAll(query: QuerySubscriptionDto) {

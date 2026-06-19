@@ -106,6 +106,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'check-in',
+        loadComponent: () =>
+          import('./features/check-in/pages/check-in/check-in.component').then(
+            (m) => m.CheckInComponent,
+          ),
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./features/reports/pages/reports/reports.component').then(
+            (m) => m.ReportsComponent,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

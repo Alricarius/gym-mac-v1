@@ -1,122 +1,80 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { AuthStore } from '../../features/auth/services/auth.store';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [
+    RouterOutlet, RouterLink, RouterLinkActive,
+    MatToolbarModule, MatListModule, MatIconModule, MatButtonModule,
+  ],
   template: `
-    <div class="app-shell">
-      <aside class="sidebar">
-        <div class="sidebar-header">
-          <h2>GymAdmin</h2>
-        </div>
-        <nav class="sidebar-nav">
-          <a class="nav-item" routerLink="/dashboard" routerLinkActive="active">
-            Dashboard
+    <div class="flex h-screen">
+      <aside class="w-60 bg-gray-900 text-white flex flex-col">
+        <mat-toolbar class="bg-gray-900 text-white border-b border-white/10">
+          <span class="text-lg font-medium">GymAdmin</span>
+        </mat-toolbar>
+
+        <mat-nav-list class="flex-1 px-3 pt-2">
+          <a mat-list-item routerLink="/dashboard" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">dashboard</mat-icon>
+            <span>Dashboard</span>
           </a>
-          <a class="nav-item" routerLink="/members" routerLinkActive="active">
-            Miembros
+          <a mat-list-item routerLink="/members" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">people</mat-icon>
+            <span>Miembros</span>
           </a>
-          <a class="nav-item" routerLink="/plans" routerLinkActive="active">
-            Planes
+          <a mat-list-item routerLink="/plans" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">subscriptions</mat-icon>
+            <span>Planes</span>
           </a>
-          <a class="nav-item" routerLink="/subscriptions" routerLinkActive="active">
-            Suscripciones
+          <a mat-list-item routerLink="/subscriptions" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">assignment</mat-icon>
+            <span>Suscripciones</span>
           </a>
-          <a class="nav-item" routerLink="/payments" routerLinkActive="active">
-            Pagos
+          <a mat-list-item routerLink="/check-in" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">login</mat-icon>
+            <span>Check-in</span>
           </a>
-        </nav>
-        <div class="sidebar-footer">
-          <span class="user-name">{{ authStore.user()?.fullName }}</span>
-          <button class="btn-logout" (click)="logout()">Cerrar sesión</button>
+          <a mat-list-item routerLink="/payments" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">payments</mat-icon>
+            <span>Pagos</span>
+          </a>
+          <a mat-list-item routerLink="/reports" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">bar_chart</mat-icon>
+            <span>Reportes</span>
+          </a>
+        </mat-nav-list>
+
+        <div class="p-4 border-t border-white/10">
+          <span class="block text-sm text-white/80 mb-2">{{ authStore.user()?.fullName }}</span>
+          <button mat-flat-button class="!bg-white/10 !text-white w-full text-sm" (click)="logout()">
+            <mat-icon class="mr-2 text-lg">logout</mat-icon>
+            Cerrar sesión
+          </button>
         </div>
       </aside>
-      <main class="main-content">
+      <main class="flex-1 bg-gray-50 overflow-y-auto">
         <router-outlet />
       </main>
     </div>
   `,
   styles: [`
-    .app-shell {
-      display: flex;
-      height: 100vh;
-    }
-
-    .sidebar {
-      width: 240px;
-      background: #1a1a2e;
-      color: white;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .sidebar-header {
-      padding: 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .sidebar-header h2 {
-      margin: 0;
-      font-size: 18px;
-    }
-
-    .sidebar-nav {
-      flex: 1;
-      padding: 12px;
-    }
-
-    .nav-item {
-      display: block;
-      padding: 10px 14px;
-      color: rgba(255, 255, 255, 0.7);
-      text-decoration: none;
-      border-radius: 8px;
-      margin-bottom: 4px;
-      font-size: 14px;
-      transition: all 0.2s;
-    }
-
-    .nav-item:hover, .nav-item.active {
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-    }
-
-    .sidebar-footer {
-      padding: 16px 20px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    .user-name {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 8px;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .btn-logout {
-      width: 100%;
-      padding: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-    }
-
-    .btn-logout:hover {
-      background: rgba(255, 255, 255, 0.2);
-    }
-
-    .main-content {
-      flex: 1;
-      background: #f5f6fa;
-      overflow-y: auto;
-    }
+    .active { background: rgba(255,255,255,0.1) !important; color: white !important; }
+    .mdc-list-item { border-radius: 8px !important; }
   `],
 })
 export class MainLayoutComponent {
