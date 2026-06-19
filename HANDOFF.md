@@ -1,6 +1,7 @@
 # Handoff — Gym Management System
 
-> Última actualización: 19/06/2026 — Iteración 6 completa (Dashboard + Reports + Pago integrado)
+> Última actualización: 19/06/2026 — Iteración 6 completa (Dashboard + Reports + Check-in + Pago integrado + Seed completo)
+> Último commit: `a51a7b0`
 
 ## Stack
 
@@ -171,7 +172,15 @@ cd desktop && pnpm start
 - Payment form: campo `paidAt` prefijado con fecha/hora actual
 - Nueva documentación: `docs/FLUJO_PAGO.md`
 
-### Temas pendientes
+### Seed actualizado (19/06)
+- Ahora genera datos completos: admin, 5 miembros, 3 planes, **4 suscripciones + pagos integrados**, **26 check-ins** últimos 7 días
+- Pedro Sánchez queda sin suscripción (para probar flujo de alta)
+- Los check-ins se distribuyen aleatoriamente con entradas/salidas y timestamps variados
+
+### Bugfix: incomeLast7Days
+- `DATE(p.paidAt)` de PostgreSQL retorna un objeto `Date`, no `string`. El Map comparaba Date vs string → nunca coincidían. Se normalizó el tipo al insertar en el Map.
+
+## Temas pendientes
 
 1. **Budget del bundle**: Angular Material aumentó el tamaño inicial a ~670 kB. Ajustar `maximumBudget` en `angular.json` o habilitar lazy loading de módulos Material. (Iteración 10)
 2. **confirm() nativos**: Varios componentes aún usan `confirm()` de JavaScript. Migrar a `mat-dialog`. (Iteración 10)
@@ -191,6 +200,13 @@ La próxima iteración según `docs/MVP_ROADMAP.md` es:
 2. Seguir patrones de módulos existentes (misma estructura DDD)
 3. Backend: crear entidades Class + Schedule + Booking con migraciones
 4. Frontend: crear features con lazy loading, actualizar sidebar
+
+### Tip: el seed ya genera datos completos
+Si necesitás resetear la BD, solo hace falta:
+```bash
+docker compose down -v && docker compose up -d
+cd backend && pnpm build && pnpm migration:run && pnpm seed
+```
 
 ### Errores comunes al retomar
 - El backend puede crashear si PostgreSQL no está corriendo → revisar `docker ps`
