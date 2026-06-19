@@ -4,6 +4,8 @@ import { dataSourceOptions } from './ormconfig';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { MembersModule } from './modules/members/members.module';
+import { PlansModule } from './modules/plans/plans.module';
+import { SubscriptionsModule } from './modules/subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -11,6 +13,8 @@ import { MembersModule } from './modules/members/members.module';
     AuthModule,
     UsersModule,
     MembersModule,
+    PlansModule,
+    SubscriptionsModule,
   ],
 })
 export class AppModule {}

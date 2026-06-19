@@ -3,11 +3,13 @@ import { AppModule } from './app.module';
 import { ConflictException } from '@nestjs/common';
 import { UsersService } from './modules/users/application/services/users.service';
 import { MembersService } from './modules/members/application/services/members.service';
+import { PlansService } from './modules/plans/application/services/plans.service';
 
 async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);
   const usersService = app.get(UsersService);
   const membersService = app.get(MembersService);
+  const plansService = app.get(PlansService);
 
   try {
     const admin = await usersService.create({
@@ -40,6 +42,25 @@ async function seed() {
     } catch (err: any) {
       if (err instanceof ConflictException || err?.status === 409) {
         console.log('Member already exists, skipping:', data.fullName);
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  const plans = [
+    { name: 'Mensual', duration: 30, price: 30, classCount: 8, description: 'Plan mensual con 8 clases' },
+    { name: 'Trimestral', duration: 90, price: 80, classCount: 30, description: 'Plan trimestral con 30 clases' },
+    { name: 'Anual', duration: 365, price: 300, description: 'Plan anual sin límite de clases' },
+  ];
+
+  for (const data of plans) {
+    try {
+      const plan = await plansService.create(data);
+      console.log('Plan created:', plan.name);
+    } catch (err: any) {
+      if (err instanceof ConflictException || err?.status === 409) {
+        console.log('Plan already exists, skipping:', data.name);
       } else {
         throw err;
       }

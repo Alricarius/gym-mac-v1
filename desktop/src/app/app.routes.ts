@@ -50,6 +50,41 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'plans',
+        loadComponent: () =>
+          import('./features/plans/pages/plan-list/plan-list.component').then(
+            (m) => m.PlanListComponent,
+          ),
+      },
+      {
+        path: 'plans/new',
+        loadComponent: () =>
+          import('./features/plans/pages/plan-form/plan-form.component').then(
+            (m) => m.PlanFormComponent,
+          ),
+      },
+      {
+        path: 'plans/:id',
+        loadComponent: () =>
+          import('./features/plans/pages/plan-form/plan-form.component').then(
+            (m) => m.PlanFormComponent,
+          ),
+      },
+      {
+        path: 'subscriptions',
+        loadComponent: () =>
+          import('./features/subscriptions/pages/subscription-list/subscription-list.component').then(
+            (m) => m.SubscriptionListComponent,
+          ),
+      },
+      {
+        path: 'subscriptions/new',
+        loadComponent: () =>
+          import('./features/subscriptions/pages/subscription-form/subscription-form.component').then(
+            (m) => m.SubscriptionFormComponent,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

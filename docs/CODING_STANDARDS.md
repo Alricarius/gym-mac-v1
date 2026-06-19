@@ -183,6 +183,18 @@ export class MemberListComponent {
 - Estado derivado → `computed()`
 - Efectos secundarios → `effect()` (solo cuando es necesario)
 
+### Templates inline (backticks)
+
+Nunca uses `${{ variable }}` dentro de templates inline (backticks). El `${{` colisiona con la sintaxis de template literals de JavaScript `${...}`. Usá `{{ '$' + variable }}` en su lugar.
+
+```typescript
+// ❌ Mal — rompe el build
+template: `<td>${{ plan.price }}</td>`
+
+// ✅ Bien
+template: `<td>{{ '$' + plan.price }}</td>`
+```
+
 ---
 
 ## Estilo de código

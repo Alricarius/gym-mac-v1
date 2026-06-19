@@ -48,7 +48,7 @@ cd desktop && pnpm start
 ### Credenciales
 - admin@admin.com / Admin123
 
-## Lo que está hecho (Iteración 1 y 2)
+## Lo que está hecho (Iteración 1, 2 y 3)
 
 ### Iteración 1 — Scaffold + Auth
 - Backend NestJS con módulos: Auth, Users, Common
@@ -70,6 +70,18 @@ cd desktop && pnpm start
 - 5 miembros de seed
 - Migración: members
 
+### Iteración 3 — Planes + Suscripciones
+- Entidad Plan (`subscription_plans`): name, duration, price, classCount, description, isActive, soft delete
+- Entidad Subscription (`subscriptions`): memberId, planId, startDate, endDate, status (active/paused/cancelled/expired), pausedAt, pausedDays
+- CRUD de planes con búsqueda paginada
+- Suscripciones: crear, pausar, reanudar, cancelar (con reglas de negocio)
+- Un miembro puede tener solo una suscripción activa a la vez
+- endDate se calcula automáticamente según duración del plan
+- Al reanudar, se extiende endDate por los días pausados
+- Frontend: listado y formulario de planes, listado de suscripciones con acciones contextuales, formulario de asignación
+- 3 planes de seed: Mensual ($30), Trimestral ($80), Anual ($300)
+- Migración: subscription_plans + subscriptions
+
 ## Archivos clave
 
 ### Backend
@@ -90,11 +102,13 @@ cd desktop && pnpm start
 ### Frontend
 | Archivo | Propósito |
 |---|---|
-| `desktop/src/app/app.routes.ts` | Rutas con lazy loading |
-| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet |
+| `desktop/src/app/app.routes.ts` | Rutas con lazy loading (incluye /plans, /subscriptions) |
+| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet (links: Dashboard, Miembros, Planes, Suscripciones) |
 | `desktop/src/app/features/auth/` | Login, auth service, token service, auth store (signals) |
 | `desktop/src/app/features/dashboard/` | Dashboard placeholder |
 | `desktop/src/app/features/members/` | Lista + formulario miembros |
+| `desktop/src/app/features/plans/` | Lista + formulario planes (nuevo) |
+| `desktop/src/app/features/subscriptions/` | Lista con acciones (pausar/reanudar/cancelar) + formulario crear (nuevo) |
 | `desktop/src/app/core/interceptors/auth.interceptor.ts` | JWT interceptor con refresh |
 | `desktop/src/app/core/guards/auth.guard.ts` | authGuard, loginGuard |
 | `desktop/electron/main.ts` | Main process con retry para ng serve |
@@ -108,22 +122,19 @@ cd desktop && pnpm start
 4. **RouterLink faltante**: MainLayoutComponent no importaba RouterLink/RouterLinkActive, los links del sidebar no funcionaban
 5. **Seed duplicado**: Fallaba si ya existía el admin, se agregó try/catch
 
-## Siguiente paso (Iteración 3)
+## Siguiente paso (Iteración 4)
 
 La próxima iteración sugerida según `docs/MVP_ROADMAP.md` es:
 
-### Membresías / Planes
-- Backend: entidad `Plan` (nombre, duración, precio, cantidad de clases, descripción)
-- Backend: entidad `Membership` (miembro, plan, fechas inicio/fin, estado)
-- CRUD de planes y membresías
-- Frontend: listado y formulario de planes
-- Frontend: asignar membresía a un miembro
-- Ver membresía activa de un miembro
+### Pagos
+- Backend: entidad `Payment` (suscripción, monto, método, fecha, comprobante)
+- Backend: CRUD de pagos, generación de recibo
+- Frontend: registrar pago, historial de pagos por miembro, recibo en pantalla
 
-### Cómo empezar Iteración 3
-1. Leer `docs/` para entender la arquitectura y decisiones
-2. Los patrones a seguir son los módulos existentes (`users`, `members`)
-3. Backend: crear módulo, entity, migration, service, controller, seed
+### Cómo empezar Iteración 4
+1. Leer `docs/MVP_ROADMAP.md` para endpoints exactos
+2. Seguir patrones de módulos existentes (`plans`, `subscriptions`)
+3. Backend: crear módulo payments con entity, migration, service, controller
 4. Frontend: crear feature con pages/services, agregar rutas lazy-loaded
 
 ### Errores comunes al retomar
