@@ -1,0 +1,162 @@
+# Handoff — Gym Management System
+
+> Última actualización: 18/06/2026
+
+## Stack
+
+| Capa | Tecnología |
+|---|---|
+| Desktop | Electron + Angular 18 (standalone, signals) |
+| Backend | NestJS 10 + TypeORM |
+| BD | PostgreSQL 16 (Docker) |
+| Auth | JWT + refresh token rotation |
+| ORM | TypeORM con migraciones |
+
+## Proyecto en disco
+
+```
+/Users/jp8/Documents/projects/test/
+├── backend/          # NestJS + TypeORM
+├── desktop/          # Angular 18 + Electron
+├── docs/             # Documentación (17 archivos)
+├── docker-compose.yml
+├── .env
+├── HANDOFF.md
+└── README.md
+```
+
+## Cómo levantar
+
+### 1. PostgreSQL (Docker)
+```bash
+docker compose up -d
+```
+
+### 2. Backend (puerto 3000)
+```bash
+cd backend && pnpm start:dev
+# seed (primera vez o si se resetea la BD):
+pnpm seed
+```
+
+### 3. Frontend (Angular + Electron)
+```bash
+cd desktop && pnpm start
+# Debe cargar http://localhost:4200 automáticamente
+```
+
+### Credenciales
+- admin@admin.com / Admin123
+
+## Lo que está hecho (Iteración 1 y 2)
+
+### Iteración 1 — Scaffold + Auth
+- Backend NestJS con módulos: Auth, Users, Common
+- Login con JWT, refresh token rotation, logout, /me
+- CRUD de usuarios con soft delete, roles (admin/receptionist/trainer)
+- Guards: JwtAuthGuard, RolesGuard, decorators: @CurrentUser, @Roles
+- Migración: users + refresh_tokens
+- Seed: admin@admin.com
+- Frontend Angular 18 standalone + Electron
+- Login page con formulario, interceptor JWT, guards de ruta
+- Layouts: auth (login) + main (sidebar con logout)
+- Dashboard placeholder
+- CORS configurado (localhost:4200 + file://)
+
+### Iteración 2 — Miembros CRUD
+- Entidad Member: fullName, email, phone, birthDate, gender, address, notes, status, soft delete
+- CRUD completo con búsqueda paginada (ILike por nombre)
+- Frontend: lista con tabla, búsqueda en vivo, paginación, formulario crear/editar
+- 5 miembros de seed
+- Migración: members
+
+## Archivos clave
+
+### Backend
+| Archivo | Propósito |
+|---|---|
+| `backend/src/main.ts` | Bootstrap, CORS, ValidationPipe |
+| `backend/src/app.module.ts` | Módulo raíz |
+| `backend/src/config.ts` | Config desde env |
+| `backend/src/ormconfig.ts` | DataSource TypeORM |
+| `backend/src/seed.ts` | Seed de datos |
+| `backend/src/common/guards/` | JwtAuthGuard, RolesGuard |
+| `backend/src/common/decorators/` | @CurrentUser, @Roles |
+| `backend/src/modules/auth/` | Auth: login, refresh, logout, me |
+| `backend/src/modules/users/` | Users CRUD |
+| `backend/src/modules/members/` | Members CRUD con búsqueda |
+| `backend/src/database/migrations/` | Migraciones SQL |
+
+### Frontend
+| Archivo | Propósito |
+|---|---|
+| `desktop/src/app/app.routes.ts` | Rutas con lazy loading |
+| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet |
+| `desktop/src/app/features/auth/` | Login, auth service, token service, auth store (signals) |
+| `desktop/src/app/features/dashboard/` | Dashboard placeholder |
+| `desktop/src/app/features/members/` | Lista + formulario miembros |
+| `desktop/src/app/core/interceptors/auth.interceptor.ts` | JWT interceptor con refresh |
+| `desktop/src/app/core/guards/auth.guard.ts` | authGuard, loginGuard |
+| `desktop/electron/main.ts` | Main process con retry para ng serve |
+| `desktop/electron/preload.ts` | Context bridge IPC |
+
+## Issues conocidos resueltos
+
+1. **CORS**: El backend solo permitía `file://`, se agregó `http://localhost:4200` (dev)
+2. **Migración**: Fallaba con ts-node, se cambió a `build && dist/ormconfig.js`
+3. **Race condition Electron**: Arrancaba antes que ng serve, se agregó retry loop en main.ts
+4. **RouterLink faltante**: MainLayoutComponent no importaba RouterLink/RouterLinkActive, los links del sidebar no funcionaban
+5. **Seed duplicado**: Fallaba si ya existía el admin, se agregó try/catch
+
+## Siguiente paso (Iteración 3)
+
+La próxima iteración sugerida según `docs/MVP_ROADMAP.md` es:
+
+### Membresías / Planes
+- Backend: entidad `Plan` (nombre, duración, precio, cantidad de clases, descripción)
+- Backend: entidad `Membership` (miembro, plan, fechas inicio/fin, estado)
+- CRUD de planes y membresías
+- Frontend: listado y formulario de planes
+- Frontend: asignar membresía a un miembro
+- Ver membresía activa de un miembro
+
+### Cómo empezar Iteración 3
+1. Leer `docs/` para entender la arquitectura y decisiones
+2. Los patrones a seguir son los módulos existentes (`users`, `members`)
+3. Backend: crear módulo, entity, migration, service, controller, seed
+4. Frontend: crear feature con pages/services, agregar rutas lazy-loaded
+
+### Errores comunes al retomar
+- El backend puede crashear si PostgreSQL no está corriendo → revisar `docker ps`
+- Si cambia la entidad, crear nueva migración y ejecutar `pnpm migration:run`
+- `ng serve` puede no detectar cambios de archivos nuevos → reiniciar `pnpm start`
+- Si Electron no carga, esperar 10-15s (retry loop, hasta 30 intentos)
+
+## Variables de entorno (`.env`)
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=gym_development
+DB_USER=gym_user
+DB_PASSWORD=gym_pass
+JWT_ACCESS_SECRET=...
+JWT_REFRESH_SECRET=...
+JWT_ACCESS_EXPIRY=15m
+JWT_REFRESH_EXPIRY=7d
+```
+
+## Comandos útiles
+
+```bash
+# Backend
+pnpm start:dev          # Desarrollo con watch mode
+pnpm build              # Compilar a JS
+pnpm seed               # Poblar datos de prueba
+pnpm migration:run      # Ejecutar migraciones pendientes
+pnpm migration:revert   # Revertir última migración
+
+# Frontend
+pnpm start              # ng serve + Electron concurrente
+pnpm build              # Build producción
+```
