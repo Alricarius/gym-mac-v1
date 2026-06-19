@@ -121,6 +121,10 @@ export class SubscriptionsService {
     return this.repo.save(subscription);
   }
 
+  async updateLastPayment(id: string, paidAt: Date): Promise<void> {
+    await this.repo.update(id, { lastPaymentAt: paidAt });
+  }
+
   private calculateEndDate(startDate: string, durationDays: number): string {
     const date = new Date(startDate);
     date.setDate(date.getDate() + durationDays);

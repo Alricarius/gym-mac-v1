@@ -1,6 +1,6 @@
 # Handoff — Gym Management System
 
-> Última actualización: 18/06/2026
+> Última actualización: 19/06/2026
 
 ## Stack
 
@@ -48,7 +48,7 @@ cd desktop && pnpm start
 ### Credenciales
 - admin@admin.com / Admin123
 
-## Lo que está hecho (Iteración 1, 2 y 3)
+## Lo que está hecho (Iteración 1, 2, 3 y 4)
 
 ### Iteración 1 — Scaffold + Auth
 - Backend NestJS con módulos: Auth, Users, Common
@@ -82,6 +82,15 @@ cd desktop && pnpm start
 - 3 planes de seed: Mensual ($30), Trimestral ($80), Anual ($300)
 - Migración: subscription_plans + subscriptions
 
+### Iteración 4 — Pagos
+- Entidad Payment: subscriptionId (FK), memberId (FK denormalizado), amount, method (cash/card/transfer), reference, notes, paidAt
+- CRUD de pagos con validación (monto auto-prefill desde plan, método obligatorio)
+- Generación de recibo vía endpoint GET /payments/:id/receipt (JSON con datos formateados)
+- Al crear un pago, se actualiza `subscription.lastPaymentAt` automáticamente
+- Frontend: listado paginado de pagos, formulario con select de suscripción + auto-fill de monto, vista de recibo imprimible (HTML + @media print)
+- Rutas: /payments, /payments/new, /payments/:id
+- Migración: payments + subscriptions.lastPaymentAt
+
 ## Archivos clave
 
 ### Backend
@@ -97,18 +106,20 @@ cd desktop && pnpm start
 | `backend/src/modules/auth/` | Auth: login, refresh, logout, me |
 | `backend/src/modules/users/` | Users CRUD |
 | `backend/src/modules/members/` | Members CRUD con búsqueda |
+| `backend/src/modules/payments/` | Payment CRUD + recibo |
 | `backend/src/database/migrations/` | Migraciones SQL |
 
 ### Frontend
 | Archivo | Propósito |
 |---|---|
-| `desktop/src/app/app.routes.ts` | Rutas con lazy loading (incluye /plans, /subscriptions) |
-| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet (links: Dashboard, Miembros, Planes, Suscripciones) |
+| `desktop/src/app/app.routes.ts` | Rutas con lazy loading (incluye /plans, /subscriptions, /payments) |
+| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet (links: Dashboard, Miembros, Planes, Suscripciones, Pagos) |
 | `desktop/src/app/features/auth/` | Login, auth service, token service, auth store (signals) |
 | `desktop/src/app/features/dashboard/` | Dashboard placeholder |
 | `desktop/src/app/features/members/` | Lista + formulario miembros |
 | `desktop/src/app/features/plans/` | Lista + formulario planes (nuevo) |
 | `desktop/src/app/features/subscriptions/` | Lista con acciones (pausar/reanudar/cancelar) + formulario crear (nuevo) |
+| `desktop/src/app/features/payments/` | Lista de pagos, formulario, recibo imprimible (nuevo) |
 | `desktop/src/app/core/interceptors/auth.interceptor.ts` | JWT interceptor con refresh |
 | `desktop/src/app/core/guards/auth.guard.ts` | authGuard, loginGuard |
 | `desktop/electron/main.ts` | Main process con retry para ng serve |
@@ -122,20 +133,19 @@ cd desktop && pnpm start
 4. **RouterLink faltante**: MainLayoutComponent no importaba RouterLink/RouterLinkActive, los links del sidebar no funcionaban
 5. **Seed duplicado**: Fallaba si ya existía el admin, se agregó try/catch
 
-## Siguiente paso (Iteración 4)
+## Siguiente paso (Iteración 5)
 
 La próxima iteración sugerida según `docs/MVP_ROADMAP.md` es:
 
-### Pagos
-- Backend: entidad `Payment` (suscripción, monto, método, fecha, comprobante)
-- Backend: CRUD de pagos, generación de recibo
-- Frontend: registrar pago, historial de pagos por miembro, recibo en pantalla
+### Check-in
+- Backend: módulo `check-in` con verificación de membresía, registro entry/exit, WebSocket en tiempo real
+- Frontend: pantalla de check-in con búsqueda de miembro, panel de miembros activos con Socket.IO
 
-### Cómo empezar Iteración 4
+### Cómo empezar Iteración 5
 1. Leer `docs/MVP_ROADMAP.md` para endpoints exactos
-2. Seguir patrones de módulos existentes (`plans`, `subscriptions`)
-3. Backend: crear módulo payments con entity, migration, service, controller
-4. Frontend: crear feature con pages/services, agregar rutas lazy-loaded
+2. Seguir patrones de módulos existentes
+3. Backend: crear módulo check-in con entity, migration, service, controller, WebSocket gateway
+4. Frontend: crear feature con pages/services, socket.service, agregar rutas lazy-loaded
 
 ### Errores comunes al retomar
 - El backend puede crashear si PostgreSQL no está corriendo → revisar `docker ps`

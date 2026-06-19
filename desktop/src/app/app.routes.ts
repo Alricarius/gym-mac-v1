@@ -85,6 +85,27 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'payments',
+        loadComponent: () =>
+          import('./features/payments/pages/payment-list/payment-list.component').then(
+            (m) => m.PaymentListComponent,
+          ),
+      },
+      {
+        path: 'payments/new',
+        loadComponent: () =>
+          import('./features/payments/pages/payment-form/payment-form.component').then(
+            (m) => m.PaymentFormComponent,
+          ),
+      },
+      {
+        path: 'payments/:id',
+        loadComponent: () =>
+          import('./features/payments/pages/payment-receipt/payment-receipt.component').then(
+            (m) => m.PaymentReceiptComponent,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

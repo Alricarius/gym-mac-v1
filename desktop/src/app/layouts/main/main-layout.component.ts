@@ -26,6 +26,9 @@ import { AuthStore } from '../../features/auth/services/auth.store';
           <a class="nav-item" routerLink="/subscriptions" routerLinkActive="active">
             Suscripciones
           </a>
+          <a class="nav-item" routerLink="/payments" routerLinkActive="active">
+            Pagos
+          </a>
         </nav>
         <div class="sidebar-footer">
           <span class="user-name">{{ authStore.user()?.fullName }}</span>

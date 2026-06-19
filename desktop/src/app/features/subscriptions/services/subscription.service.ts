@@ -7,7 +7,7 @@ export interface Subscription {
   memberId: string;
   planId: string;
   member?: { id: string; fullName: string };
-  plan?: { id: string; name: string };
+  plan?: { id: string; name: string; price: number; duration: number };
   startDate: string;
   endDate: string;
   status: string;

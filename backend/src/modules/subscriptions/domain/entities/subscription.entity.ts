@@ -51,6 +51,9 @@ export class Subscription {
   @Column({ type: 'int', default: 0 })
   pausedDays: number;
 
+  @Column({ type: 'timestamp', nullable: true })
+  lastPaymentAt?: Date;
+
   @CreateDateColumn()
   createdAt: Date;
 
