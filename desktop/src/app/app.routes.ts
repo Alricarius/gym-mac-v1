@@ -113,6 +113,48 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'classes',
+        loadComponent: () =>
+          import('./features/classes/pages/class-list/class-list.component').then(
+            (m) => m.ClassListComponent,
+          ),
+      },
+      {
+        path: 'classes/new',
+        loadComponent: () =>
+          import('./features/classes/pages/class-form/class-form.component').then(
+            (m) => m.ClassFormComponent,
+          ),
+      },
+      {
+        path: 'classes/:id',
+        loadComponent: () =>
+          import('./features/classes/pages/class-form/class-form.component').then(
+            (m) => m.ClassFormComponent,
+          ),
+      },
+      {
+        path: 'bookings',
+        loadComponent: () =>
+          import('./features/bookings/pages/booking-calendar/booking-calendar.component').then(
+            (m) => m.BookingCalendarComponent,
+          ),
+      },
+      {
+        path: 'bookings/list',
+        loadComponent: () =>
+          import('./features/bookings/pages/booking-list/booking-list.component').then(
+            (m) => m.BookingListComponent,
+          ),
+      },
+      {
+        path: 'bookings/new',
+        loadComponent: () =>
+          import('./features/bookings/pages/booking-form/booking-form.component').then(
+            (m) => m.BookingFormComponent,
+          ),
+      },
+      {
         path: 'reports',
         loadComponent: () =>
           import('./features/reports/pages/reports/reports.component').then(

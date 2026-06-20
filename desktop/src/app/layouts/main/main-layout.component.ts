@@ -42,6 +42,16 @@ import { AuthStore } from '../../features/auth/services/auth.store';
             <mat-icon class="mr-3 text-lg">assignment</mat-icon>
             <span>Suscripciones</span>
           </a>
+          <a mat-list-item routerLink="/classes" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">fitness_center</mat-icon>
+            <span>Clases</span>
+          </a>
+          <a mat-list-item routerLink="/bookings" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">calendar_month</mat-icon>
+            <span>Reservas</span>
+          </a>
           <a mat-list-item routerLink="/check-in" routerLinkActive="active"
              class="text-white/70 hover:text-white rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">login</mat-icon>
