@@ -53,7 +53,7 @@ import { MemberService, Member } from '../../../members/services/member.service'
                 <option value="">Seleccionar horario</option>
                 @for (s of availableSchedules(); track s.id) {
                   <option [value]="s.id">
-                    {{ DAY_NAMES[s.dayOfWeek] }} {{ s.startTime?.slice(0, 5) }} - {{ s.endTime?.slice(0, 5) }}
+                    {{ DAY_NAMES[s.dayOfWeek] }} {{ s.startTime.slice(0, 5) }} - {{ s.endTime.slice(0, 5) }}
                   </option>
                 }
               </select>

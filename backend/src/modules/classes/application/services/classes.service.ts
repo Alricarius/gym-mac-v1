@@ -26,19 +26,30 @@ export class ClassesService {
 
   async findAll(query: QueryClassDto) {
     const { name, isActive, page = 1, limit = 20 } = query;
-    const qb = this.classRepo.createQueryBuilder('c')
+    const countQb = this.classRepo.createQueryBuilder('c')
+      .where('c.deletedAt IS NULL');
+
+    if (name) {
+      countQb.andWhere('c.name ILIKE :name', { name: `%${name}%` });
+    }
+    if (isActive !== undefined) {
+      countQb.andWhere('c.isActive = :isActive', { isActive: isActive === 'true' });
+    }
+
+    const total = await countQb.getCount();
+
+    const dataQb = this.classRepo.createQueryBuilder('c')
       .leftJoinAndSelect('c.schedules', 's')
       .where('c.deletedAt IS NULL');
 
     if (name) {
-      qb.andWhere('c.name ILIKE :name', { name: `%${name}%` });
+      dataQb.andWhere('c.name ILIKE :name', { name: `%${name}%` });
     }
     if (isActive !== undefined) {
-      qb.andWhere('c.isActive = :isActive', { isActive: isActive === 'true' });
+      dataQb.andWhere('c.isActive = :isActive', { isActive: isActive === 'true' });
     }
 
-    const total = await qb.getCount();
-    const data = await qb
+    const data = await dataQb
       .orderBy('c.createdAt', 'DESC')
       .skip((page - 1) * limit)
       .take(limit)

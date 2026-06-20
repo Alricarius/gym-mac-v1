@@ -2,7 +2,7 @@ import {
   Injectable, NotFoundException, BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, MoreThanOrEqual } from 'typeorm';
 import { Booking, BookingStatus } from '../../domain/entities/booking.entity';
 import { GymClass } from '../../../classes/domain/entities/gym-class.entity';
 import { Schedule } from '../../../classes/domain/entities/schedule.entity';
@@ -39,6 +39,7 @@ export class BookingsService {
       where: {
         memberId: dto.memberId,
         status: SubscriptionStatus.ACTIVE,
+        endDate: MoreThanOrEqual(new Date().toISOString().split('T')[0]),
       },
     });
     if (!hasActiveSubscription) {

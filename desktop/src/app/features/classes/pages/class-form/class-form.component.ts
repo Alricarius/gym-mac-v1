@@ -130,7 +130,6 @@ export class ClassFormComponent implements OnInit {
   };
   schedules = signal<CreateScheduleDto[]>([]);
   private existingSchedules: Schedule[] = [];
-  private removedScheduleIds: string[] = [];
   submitting = false;
   error = '';
 
@@ -148,11 +147,11 @@ export class ClassFormComponent implements OnInit {
             description: c.description || '',
           };
           this.existingSchedules = c.schedules || [];
-          this.schedules.set(c.schedules?.map((s) => ({
+          this.schedules.set(c.schedules.map((s) => ({
             dayOfWeek: s.dayOfWeek,
-            startTime: s.startTime?.slice(0, 5),
-            endTime: s.endTime?.slice(0, 5),
-          })) || []);
+            startTime: s.startTime.slice(0, 5),
+            endTime: s.endTime.slice(0, 5),
+          })));
         },
         error: () => this.router.navigate(['/classes']),
       });
@@ -164,10 +163,6 @@ export class ClassFormComponent implements OnInit {
   }
 
   removeSchedule(index: number): void {
-    const removed = this.existingSchedules[index];
-    if (removed?.id) {
-      this.removedScheduleIds.push(removed.id);
-    }
     this.schedules.update((s) => s.filter((_, i) => i !== index));
   }
 
@@ -183,22 +178,21 @@ export class ClassFormComponent implements OnInit {
     req.subscribe({
       next: (c) => {
         const classId = c.id;
-        const scheduleOps = [];
-
-        for (const remId of this.removedScheduleIds) {
-          scheduleOps.push(this.classService.removeSchedule(classId, remId).toPromise());
-        }
-
+        const ops: Promise<any>[] = [];
         const currentSchedules = this.schedules();
-        const existingCount = this.existingSchedules.length;
-        for (let i = 0; i < currentSchedules.length; i++) {
-          const s = currentSchedules[i];
-          if (i < existingCount) continue;
-          scheduleOps.push(this.classService.addSchedule(classId, s).toPromise());
+
+        if (this.isEdit) {
+          for (const s of this.existingSchedules) {
+            ops.push(this.classService.removeSchedule(classId, s.id).toPromise());
+          }
         }
 
-        if (scheduleOps.length > 0) {
-          Promise.all(scheduleOps).then(() => this.router.navigate(['/classes']));
+        for (const s of currentSchedules) {
+          ops.push(this.classService.addSchedule(classId, s).toPromise());
+        }
+
+        if (ops.length > 0) {
+          Promise.all(ops).then(() => this.router.navigate(['/classes']));
         } else {
           this.router.navigate(['/classes']);
         }

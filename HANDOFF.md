@@ -1,7 +1,7 @@
 # Handoff — Gym Management System
 
-> Última actualización: 19/06/2026 — Iteración 6 completa (Dashboard + Reports + Check-in + Pago integrado + Seed completo)
-> Último commit: `a51a7b0`
+> Última actualización: 20/06/2026 — Iteración 7 completa (Clases + Reservas + Reportes mejorados)
+> Último commit: `8fbcbd6`
 
 ## Stack
 
@@ -110,13 +110,15 @@ cd desktop && pnpm start
 | `backend/src/modules/payments/` | Payment CRUD + recibo |
 | `backend/src/modules/check-in/` | Check-in con WebSocket |
 | `backend/src/modules/reports/` | Dashboard + Reportes (ingresos, miembros) |
+| `backend/src/modules/classes/` | Clases CRUD + horarios (Schedule) |
+| `backend/src/modules/bookings/` | Reservas con control de cupo + waitlist |
 | `backend/src/database/migrations/` | Migraciones SQL |
 
 ### Frontend
 | Archivo | Propósito |
 |---|---|
-| `desktop/src/app/app.routes.ts` | Rutas con lazy loading (incluye /plans, /subscriptions, /payments) |
-| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet (links: Dashboard, Miembros, Planes, Suscripciones, Pagos) |
+| `desktop/src/app/app.routes.ts` | Rutas con lazy loading (incluye /plans, /subscriptions, /payments, /classes, /bookings) |
+| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet (links: Dashboard, Miembros, Planes, Suscripciones, Pagos, Clases, Reservas, Reportes) |
 | `desktop/src/app/features/auth/` | Login, auth service, token service, auth store (signals) |
 | `desktop/src/app/features/dashboard/` | Dashboard placeholder |
 | `desktop/src/app/features/members/` | Lista + formulario miembros |
@@ -125,7 +127,9 @@ cd desktop && pnpm start
 | `desktop/src/app/features/payments/` | Lista de pagos, formulario, recibo imprimible (nuevo) |
 | `desktop/src/app/features/check-in/` | Check-in con Socket.IO, panel de activos |
 | `desktop/src/app/features/dashboard/` | Dashboard con cards métricas + gráfico ingresos |
-| `desktop/src/app/features/reports/` | Reporte ingresos con filtro fechas + export CSV |
+| `desktop/src/app/features/reports/` | Reporte ingresos con filtro fechas + export CSV + auto-load + spinner |
+| `desktop/src/app/features/classes/` | Lista + formulario clases con horarios inline |
+| `desktop/src/app/features/bookings/` | Calendario mensual, lista con acciones, formulario crear reserva |
 | `desktop/src/app/core/services/socket.service.ts` | Cliente Socket.IO |
 | `desktop/src/app/core/interceptors/auth.interceptor.ts` | JWT interceptor con refresh |
 | `desktop/src/app/core/guards/auth.guard.ts` | authGuard, loginGuard |
@@ -165,6 +169,32 @@ cd desktop && pnpm start
 - Sidebar: nuevo ítem "Reportes" con icono `bar_chart`
 - Fix error handling dashboard: loading spinner, error message con status + botón reintentar, `console.error`
 
+### Iteración 7 — Clases + Reservas
+- Backend: módulo `classes` con entidades GymClass (name, capacity, color, soft delete) + Schedule (dayOfWeek, startTime, endTime, FK → class)
+  - CRUD con horarios anidados (delete-all + recreate en update)
+  - Paginación corregida: count query separado sin JOIN para evitar duplicados con `leftJoinAndSelect`
+- Backend: módulo `bookings` con entidad Booking (status: confirmed/cancelled/waitlisted/attended/no_show, FK → schedule + member)
+  - Creación con verificación de capacidad (≤ class.capacity), promoción automática desde waitlist
+  - Validación de suscripción activa: status = active + endDate >= now
+  - Cancelación que promueve al siguiente waitlisted
+  - Marcado como attended
+  - Migración 1718000000005: tables classes, schedules, bookings con FKs + indexes
+- Frontend: `class-list` con tabla (nombre, capacidad, schedule pills, status badge, editar/eliminar)
+- Frontend: `class-form` con editor de horarios inline (agregar/eliminar filas día + hora)
+  - Bugfix: schedule index-based tracking fallaba al agregar/eliminar → se cambió a deleteAll + recreateAll
+- Frontend: `booking-calendar` — grilla CSS mensual con indicadores de clase por día, navegación prev/next, click para crear
+- Frontend: `booking-list` — tabla filtrable por clase y fecha, acciones cancelar/marcar asistencia
+- Frontend: `booking-form` — select miembro → clase → horario → fecha, feedback de waitlist
+- Fix NG8107: `s.startTime?.slice`, `s.endTime?.slice` → sin optional chaining (class-form + booking-form)
+- Seed: 3 clases (Spinning Lu/Mi/Vi 18-19, Yoga Ma/Ju 07-08, Funcional Lu/Mi/Vi 07-08) + 4 reservas demo (Carlos: 3 spinning, Juan: 1 spinning)
+
+### Iteración 7.1 — Reportes mejorados
+- **Auto-load**: `ngOnInit` con fechas default (1ro del mes → hoy) + carga automática al entrar
+- **Loading indicator**: `mat-spinner` + texto "Cargando..." durante el request
+- **Error handler**: mensaje en banner rojo + `console.error` en vez de `error: () => {}`
+- **DatePipe provider**: agregado `providers: [DatePipe]` para evitar `NullInjectorError`
+- **Backend validation**: `BadRequestException` si faltan o son inválidos los parámetros `from` / `to`
+
 ### Iteración 6.1 — Pago integrado al crear suscripción
 - Al crear una suscripción, el pago se registra automáticamente (obligatorio)
 - Formulario de suscripción: nueva sección "Datos de pago" con método (required), monto (prefijado con precio del plan), referencia y notas (opcional)
@@ -187,19 +217,14 @@ cd desktop && pnpm start
 3. **Formularios sin Material**: MemberForm, PlanForm, SubscriptionForm con pago, PaymentForm aún usan CSS custom. (Iteración 10)
 4. **Charts**: El gráfico de ingresos es CSS puro (barras). Si se necesita más sofisticación, instalar chart.js. (Iteración 10)
 
-## Siguiente paso (Iteración 7)
+## Siguiente paso (Iteración 8)
 
 La próxima iteración según `docs/MVP_ROADMAP.md` es:
 
-### Clases + Reservas
-- Backend: módulos `classes` (CRUD + horarios) y `bookings` (reservas con control de cupo)
-- Frontend: gestión de clases con horarios, calendario de reservas
-
-### Cómo empezar Iteración 7
-1. Leer `docs/MVP_ROADMAP.md` para endpoints exactos
-2. Seguir patrones de módulos existentes (misma estructura DDD)
-3. Backend: crear entidades Class + Schedule + Booking con migraciones
-4. Frontend: crear features con lazy loading, actualizar sidebar
+### Notificaciones + Recordatorios
+- Backend: módulo `notifications` con canales email/SMS/push
+- Jobs cron para: expiración de suscripciones, pago vencido, recordatorio de reserva
+- Frontend: preferencias de notificación por miembro, historial de notificaciones enviadas
 
 ### Tip: el seed ya genera datos completos
 Si necesitás resetear la BD, solo hace falta:
@@ -214,6 +239,7 @@ cd backend && pnpm build && pnpm migration:run && pnpm seed
 - `ng serve` puede no detectar cambios de archivos nuevos → reiniciar `pnpm start`
 - Si Electron no carga, esperar 10-15s (retry loop, hasta 30 intentos)
 - El puerto 3000 puede quedar ocupado → `lsof -ti:3000 | xargs kill -9`
+- Tras seed, verificar que las clases y horarios se crearon en la BD antes de crear reservas
 
 ## Variables de entorno (`.env`)
 

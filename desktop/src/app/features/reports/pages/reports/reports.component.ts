@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -8,6 +8,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ReportService, IncomeReport } from '../../services/report.service';
 
 @Component({
@@ -17,11 +18,19 @@ import { ReportService, IncomeReport } from '../../services/report.service';
     DatePipe, DecimalPipe, FormsModule,
     MatCardModule, MatFormFieldModule, MatInputModule,
     MatDatepickerModule, MatNativeDateModule,
-    MatButtonModule, MatIconModule,
+    MatButtonModule, MatIconModule, MatProgressSpinnerModule,
   ],
+  providers: [DatePipe],
   template: `
     <div class="p-8">
       <h1 class="text-2xl font-medium text-gray-800 mb-6">Reporte de Ingresos</h1>
+
+      @if (errorMessage) {
+        <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
+          <mat-icon class="text-red-500 text-base">error</mat-icon>
+          {{ errorMessage }}
+        </div>
+      }
 
       <mat-card class="!rounded-xl !shadow-sm mb-6">
         <mat-card-content class="p-5">
@@ -55,6 +64,13 @@ import { ReportService, IncomeReport } from '../../services/report.service';
           </div>
         </mat-card-content>
       </mat-card>
+
+      @if (isLoading) {
+        <div class="flex justify-center items-center py-12">
+          <mat-spinner diameter="40"></mat-spinner>
+          <span class="ml-3 text-gray-500">Cargando...</span>
+        </div>
+      }
 
       @if (report) {
         <mat-card class="!rounded-xl !shadow-sm">
@@ -96,23 +112,43 @@ import { ReportService, IncomeReport } from '../../services/report.service';
     </div>
   `,
 })
-export class ReportsComponent {
+export class ReportsComponent implements OnInit {
   private readonly reportService = inject(ReportService);
   private readonly datePipe = inject(DatePipe);
 
   fromDate: Date | null = null;
   toDate: Date | null = null;
   report: IncomeReport | null = null;
+  isLoading = false;
+  errorMessage = '';
+
+  ngOnInit(): void {
+    const now = new Date();
+    this.fromDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    this.toDate = now;
+    this.loadReport();
+  }
 
   loadReport(): void {
     if (!this.fromDate || !this.toDate) return;
+
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.report = null;
 
     const from = this.toDateStr(this.fromDate);
     const to = this.toDateStr(this.toDate);
 
     this.reportService.getIncome(from, to).subscribe({
-      next: (data) => (this.report = data),
-      error: () => {},
+      next: (data) => {
+        this.report = data;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading report:', err);
+        this.errorMessage = 'Error al cargar el reporte. Verifica la conexión con el servidor.';
+        this.isLoading = false;
+      },
     });
   }
 

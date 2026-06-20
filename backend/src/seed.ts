@@ -10,6 +10,8 @@ import { SubscriptionsService } from './modules/subscriptions/application/servic
 import { CheckInsService } from './modules/check-in/application/services/check-ins.service';
 import { CheckIn } from './modules/check-in/domain/entities/check-in.entity';
 import { CheckInType } from './modules/check-in/domain/entities/check-in.entity';
+import { ClassesService } from './modules/classes/application/services/classes.service';
+import { BookingsService } from './modules/bookings/application/services/bookings.service';
 import { DataSource } from 'typeorm';
 
 async function seed() {
@@ -154,6 +156,92 @@ async function seed() {
   }
 
   console.log(`✓ ${checkInCount} check-ins created for the last 7 days`);
+
+  const classesService = app.get(ClassesService);
+  const bookingsService = app.get(BookingsService);
+
+  const classData = [
+    {
+      name: 'Spinning', description: 'Clase intensiva de ciclismo indoor', capacity: 15, color: '#e74c3c',
+      schedules: [
+        { dayOfWeek: 1, startTime: '18:00', endTime: '19:00' },
+        { dayOfWeek: 3, startTime: '18:00', endTime: '19:00' },
+        { dayOfWeek: 5, startTime: '18:00', endTime: '19:00' },
+      ],
+    },
+    {
+      name: 'Yoga', description: 'Clase de yoga para todos los niveles', capacity: 20, color: '#2ecc71',
+      schedules: [
+        { dayOfWeek: 2, startTime: '07:00', endTime: '08:00' },
+        { dayOfWeek: 4, startTime: '07:00', endTime: '08:00' },
+      ],
+    },
+    {
+      name: 'Funcional', description: 'Entrenamiento funcional de alta intensidad', capacity: 25, color: '#3498db',
+      schedules: [
+        { dayOfWeek: 1, startTime: '07:00', endTime: '08:00' },
+        { dayOfWeek: 3, startTime: '07:00', endTime: '08:00' },
+        { dayOfWeek: 5, startTime: '07:00', endTime: '08:00' },
+      ],
+    },
+  ];
+
+  for (const cd of classData) {
+    try {
+      const c = await classesService.create({
+        name: cd.name, description: cd.description, capacity: cd.capacity, color: cd.color,
+      });
+      for (const s of cd.schedules) {
+        await classesService.addSchedule(c.id, s);
+      }
+      console.log(`✓ Class created: ${c.name} with ${cd.schedules.length} schedules`);
+    } catch (err: any) {
+      console.log(`~ Class already exists, skipping: ${cd.name}`);
+    }
+  }
+
+  const allClasses = (await classesService.findAll({})).data;
+  const spinning = allClasses.find((c) => c.name === 'Spinning');
+
+  if (spinning && carlos && juan) {
+    const futureDates = [1, 3, 5].map((offset) => {
+      const d = new Date();
+      d.setDate(d.getDate() + offset);
+      return d.toISOString().split('T')[0];
+    });
+
+    const spinningSchedules = spinning.schedules || [];
+
+    for (let i = 0; i < Math.min(futureDates.length, spinningSchedules.length); i++) {
+      try {
+        await bookingsService.create({
+          classId: spinning.id,
+          scheduleId: spinningSchedules[i].id,
+          memberId: carlos.id,
+          bookingDate: futureDates[i],
+        });
+        console.log(`✓ Booking created for Carlos → Spinning on ${futureDates[i]}`);
+      } catch (err: any) {
+        console.log(`~ Booking skipped: ${err.message}`);
+      }
+    }
+
+    const firstScheduleId = spinningSchedules[0]?.id;
+    if (firstScheduleId) {
+      try {
+        await bookingsService.create({
+          classId: spinning.id,
+          scheduleId: firstScheduleId,
+          memberId: juan.id,
+          bookingDate: futureDates[0],
+        });
+        console.log(`✓ Booking created for Juan → Spinning on ${futureDates[0]}`);
+      } catch (err: any) {
+        console.log(`~ Booking skipped: ${err.message}`);
+      }
+    }
+  }
+
   console.log('=== Seed complete ===');
 
   await app.close();

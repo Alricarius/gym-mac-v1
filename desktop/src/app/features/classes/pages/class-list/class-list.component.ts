@@ -60,17 +60,17 @@ const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
                     </td>
                     <td class="py-3 px-4 text-gray-500">{{ c.capacity }}</td>
                     <td class="py-3 px-4 text-gray-500">
-                      @if (c.schedules.length) {
-                        <span class="text-xs space-x-1">
-                          @for (s of c.schedules; track s.id) {
-                            <span class="inline-block bg-gray-100 rounded px-1.5 py-0.5 mb-0.5">
-                              {{ DAY_NAMES[s.dayOfWeek] }} {{ s.startTime.slice(0, 5) }}
-                            </span>
-                          }
-                        </span>
-                      } @else {
-                        <span class="text-gray-400 italic">Sin horarios</span>
-                      }
+                        @if (c.schedules.length) {
+                          <span class="text-xs space-x-1">
+                            @for (s of c.schedules; track s.id) {
+                              <span class="inline-block bg-gray-100 rounded px-1.5 py-0.5 mb-0.5">
+                                {{ DAY_NAMES[s.dayOfWeek] }} {{ s.startTime.slice(0, 5) }}
+                              </span>
+                            }
+                          </span>
+                        } @else {
+                          <span class="text-gray-400 italic">Sin horarios</span>
+                        }
                     </td>
                     <td class="py-3 px-4">
                       <span class="badge badge-{{ c.isActive ? 'active' : 'inactive' }}">
