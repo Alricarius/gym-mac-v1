@@ -24,12 +24,13 @@ export class MembersService {
     return this.repo.save(member);
   }
 
-  async create(dto: CreateMemberDto): Promise<Member> {
+  async create(dto: CreateMemberDto, createdById: string): Promise<Member> {
     if (dto.email) {
       const exists = await this.repo.findOne({ where: { email: dto.email } });
       if (exists) throw new ConflictException('Email already registered');
     }
     const member = this.repo.create(dto);
+    member.createdById = createdById;
     return this.repo.save(member);
   }
 

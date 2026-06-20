@@ -40,17 +40,25 @@ Todas las tablas tienen `deleted_at TIMESTAMPTZ NULL`. Las consultas siempre fil
 
 ### Audit fields
 
+Todas las tablas tienen (excepto `updated_by` aún no implementado):
+
 ```sql
-created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-deleted_at  TIMESTAMPTZ NULL
-created_by  UUID REFERENCES users(id)
-updated_by  UUID REFERENCES users(id)
+created_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+updated_at    TIMESTAMPTZ NOT NULL DEFAULT NOW()
+deleted_at    TIMESTAMPTZ NULL
+createdById   UUID REFERENCES users(id)
 ```
 
-Usar `@BeforeUpdate()` en TypeORM para actualizar `updated_at`.
+- `createdById` es **NOT NULL** en 12 tablas (FK → users), **nullable** solo en `notifications` (sistema puede crear sin usuario).
+- El valor se inyecta desde el JWT vía `@CurrentUser('id')` en los controladores.
+- `updated_by` está pendiente para una iteración futura.
+- Usar `@BeforeUpdate()` en TypeORM para actualizar `updated_at`.
 
 ## Diagrama Entidad-Relación
+
+> Nota: `createdById` es NOT NULL en todas las tablas excepto `notifications` (nullable). `users` no tiene `createdById` por ser la tabla raíz del sistema.
+
+
 
 ```
 branches
@@ -60,6 +68,7 @@ branches
   phone
   logo_url
   is_active
+  createdById (FK → users) NOT NULL
 
 users
   id (PK)
@@ -69,6 +78,13 @@ users
   password_hash
   role (ENUM: superadmin, admin, recepcionista, instructor)
   is_active
+
+refresh_tokens
+  id (PK)
+  user_id (FK → users)
+  token_hash
+  expires_at TIMESTAMPTZ
+  createdById (FK → users) NOT NULL
 
 members
   id (PK)
@@ -85,6 +101,7 @@ members
   notes
   status (ENUM: active, suspended, expired, cancelled)
   last_check_in
+  createdById (FK → users) NOT NULL
 
 subscription_plans
   id (PK)
@@ -96,6 +113,7 @@ subscription_plans
   max_visits_per_week (nullable, NULL = ilimitado)
   grace_days
   is_active
+  createdById (FK → users) NOT NULL
 
 subscriptions
   id (PK)
@@ -109,6 +127,7 @@ subscriptions
   resumed_at TIMESTAMPTZ
   cancelled_at TIMESTAMPTZ
   auto_renew BOOLEAN DEFAULT false
+  createdById (FK → users) NOT NULL
 
 payments
   id (PK)
@@ -121,6 +140,7 @@ payments
   paid_date TIMESTAMPTZ
   status (ENUM: pending, paid, overdue, refunded)
   notes
+  createdById (FK → users) NOT NULL
 
 check_ins
   id (PK)
@@ -128,6 +148,7 @@ check_ins
   branch_id (FK → branches)
   type (ENUM: entry, exit)
   timestamp TIMESTAMPTZ DEFAULT NOW()
+  createdById (FK → users) NOT NULL
 
 classes
   id (PK)
@@ -138,6 +159,7 @@ classes
   capacity INT
   duration_minutes INT
   is_active
+  createdById (FK → users) NOT NULL
 
 class_schedules
   id (PK)
@@ -145,6 +167,7 @@ class_schedules
   day_of_week INT (0=Sun, 1=Mon...6=Sat)
   start_time TIME
   end_time TIME
+  createdById (FK → users) NOT NULL
 
 bookings
   id (PK)
@@ -153,6 +176,7 @@ bookings
   date DATE
   status (ENUM: confirmed, cancelled, attended, no_show)
   checked_in_at TIMESTAMPTZ
+  createdById (FK → users) NOT NULL
 
 inventory_items
   id (PK)
@@ -162,6 +186,7 @@ inventory_items
   condition (ENUM: new, good, needs_repair, damaged)
   last_maintenance DATE
   notes
+  createdById (FK → users) NOT NULL
 
 inventory_loans
   id (PK)
@@ -171,6 +196,7 @@ inventory_loans
   return_date TIMESTAMPTZ (nullable)
   returned_at TIMESTAMPTZ (nullable)
   status (ENUM: active, returned, overdue)
+  createdById (FK → users) NOT NULL
 
 notifications
   id (PK)
@@ -181,6 +207,7 @@ notifications
   body TEXT
   sent_at TIMESTAMPTZ
   read_at TIMESTAMPTZ (nullable)
+  createdById (FK → users, nullable)
 ```
 
 ## Índices recomendados

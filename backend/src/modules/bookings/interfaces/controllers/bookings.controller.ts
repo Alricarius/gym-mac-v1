@@ -8,6 +8,7 @@ import { UpdateBookingDto } from '../../application/dtos/update-booking.dto';
 import { QueryBookingDto } from '../../application/dtos/query-booking.dto';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 
 @Controller('bookings')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -15,8 +16,8 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
-  create(@Body() dto: CreateBookingDto) {
-    return this.bookingsService.create(dto);
+  create(@Body() dto: CreateBookingDto, @CurrentUser('id') userId: string) {
+    return this.bookingsService.create(dto, userId);
   }
 
   @Get()

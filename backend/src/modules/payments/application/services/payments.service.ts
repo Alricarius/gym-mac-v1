@@ -25,7 +25,7 @@ export class PaymentsService {
     return first[0]?.id;
   }
 
-  async create(dto: CreatePaymentDto): Promise<Payment> {
+  async create(dto: CreatePaymentDto, createdById: string): Promise<Payment> {
     const subscription = await this.subscriptionsService.findById(dto.subscriptionId);
 
     const amount = dto.amount ?? Number(subscription.plan.price);
@@ -43,6 +43,7 @@ export class PaymentsService {
       notes: dto.notes,
       paidAt: dto.paidAt ? new Date(dto.paidAt) : new Date(),
       branchId: await this.resolveBranchId(dto.branchId),
+      createdById,
     });
 
     const saved = await this.repo.save(payment);

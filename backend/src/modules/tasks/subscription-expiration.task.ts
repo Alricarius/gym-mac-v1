@@ -46,7 +46,7 @@ export class SubscriptionExpirationTask {
         channel: NotificationChannel.IN_APP,
         subject,
         body,
-      });
+      }, undefined);
 
       if (member.email) {
         await this.notificationsService.sendNotification({
@@ -55,7 +55,7 @@ export class SubscriptionExpirationTask {
           channel: NotificationChannel.EMAIL,
           subject,
           body,
-        });
+        }, undefined);
       }
 
       if (member.phone) {
@@ -65,7 +65,7 @@ export class SubscriptionExpirationTask {
           channel: NotificationChannel.WHATSAPP,
           subject,
           body,
-        });
+        }, undefined);
       }
     }
 

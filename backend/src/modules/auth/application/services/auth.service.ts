@@ -79,6 +79,7 @@ export class AuthService {
     const expiryMs = 7 * 24 * 60 * 60 * 1000;
     await this.refreshTokenRepo.save({
       userId: user.id,
+      createdById: user.id,
       tokenHash,
       expiresAt: new Date(Date.now() + expiryMs),
     });

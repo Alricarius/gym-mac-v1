@@ -5,6 +5,7 @@ import {
 } from 'typeorm';
 import { InventoryItem } from './inventory-item.entity';
 import { Member } from '../../../members/domain/entities/member.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
 @Entity('inventory_loans')
 export class InventoryLoan {
@@ -42,4 +43,11 @@ export class InventoryLoan {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

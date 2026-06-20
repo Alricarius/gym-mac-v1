@@ -1,7 +1,9 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  ManyToOne, JoinColumn,
 } from 'typeorm';
+import { User } from '../../../users/domain/entities/user.entity';
 
 @Entity('subscription_plans')
 export class Plan {
@@ -34,4 +36,11 @@ export class Plan {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

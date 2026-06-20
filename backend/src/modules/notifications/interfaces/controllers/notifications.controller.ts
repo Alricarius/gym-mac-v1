@@ -1,6 +1,7 @@
 import {
   Controller, Get, Patch, Param, Query, UseGuards,
 } from '@nestjs/common';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { NotificationsService } from '../../application/services/notifications.service';
 import { QueryNotificationDto } from '../../application/dto/query-notification.dto';

@@ -4,6 +4,7 @@ import {
   ManyToOne, JoinColumn,
 } from 'typeorm';
 import { Branch } from '../../../branches/domain/entities/branch.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
 @Entity('inventory_items')
 export class InventoryItem {
@@ -37,4 +38,11 @@ export class InventoryItem {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

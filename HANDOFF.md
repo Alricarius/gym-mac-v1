@@ -1,7 +1,7 @@
 # Handoff — Gym Management System
 
-> Última actualización: 20/06/2026 — Iteración 8 completa (Notificaciones + Recordatorios)
-> Último commit: `813b76b`
+> Última actualización: 20/06/2026 — Iteración 9.B completa (createdBy en todas las entidades)
+> Último commit: `473680b`
 
 ## Stack
 
@@ -114,7 +114,7 @@ cd desktop && pnpm start
 | `backend/src/modules/bookings/` | Reservas con control de cupo + waitlist |
 | `backend/src/modules/notifications/` | Notificaciones multicanal (in-app/email/whatsapp) con mocks |
 | `backend/src/modules/tasks/` | Tareas cron (suscripción por vencer, recordatorio booking) |
-| `backend/src/database/migrations/` | Migraciones SQL |
+| `backend/src/database/migrations/` | Migraciones SQL (0000 → 0009) |
 
 ### Frontend
 | Archivo | Propósito |
@@ -230,6 +230,22 @@ cd desktop && pnpm start
 ### Bugfix: incomeLast7Days
 - `DATE(p.paidAt)` de PostgreSQL retorna un objeto `Date`, no `string`. El Map comparaba Date vs string → nunca coincidían. Se normalizó el tipo al insertar en el Map.
 
+### Fase 9.B — Audit fields (createdBy en todas las entidades)
+
+- **13 entidades** modificadas: se agregó `createdById` (UUID → users) con `@ManyToOne(() => User)`
+- 12 tablas con `createdById` NOT NULL (refresh_tokens, subscription_plans, branches, bookings, members, check_ins, subscriptions, schedules, classes, inventory_items, inventory_loans, payments)
+- 1 tabla (notifications) con `createdById` nullable para notificaciones del sistema (cron tasks)
+- **13 servicios** modificados: parámetro `createdById: string` en `create()`/`update()`
+- **11 controladores** modificados: `@CurrentUser('id') userId` extraído del JWT
+- **AuthService**: `generateTokens()` setea `createdById: user.id` en refresh token
+- **NotificationService**: `sendNotification()` con `createdById?: string` opcional
+- **Seed actualizado**: captura `adminId` y lo pasa a todos los `create()`/`insert()`/`loan()`
+- **Migración 1718000000009**: backfill con primer admin + `SET NOT NULL` + FK constraints + índices
+- **Bugfix**: `checkInRepo.insert()` en seed ahora incluye `createdById: adminId`
+- **Bugfix**: `notification.entity.ts` — `createdBy` cambiado a `createdBy?: User` (nullable)
+- **Build backend**: ✅ `npx tsc --noEmit` limpio
+- **Migration ejecutada**: ✅ en BD contra 13 tablas
+
 ## Temas pendientes
 
 1. **Budget del bundle**: Angular Material ~782 kB. Ajustar `maximumBudget` en `angular.json` o lazy loading. (Iteración 10)
@@ -238,15 +254,21 @@ cd desktop && pnpm start
 4. **Charts**: Gráfico de ingresos es CSS puro. Si se necesita más, instalar chart.js. (Iteración 10)
 5. **Canales mock**: Email y WhatsApp están en modo mock. Instalar `nodemailer` + `twilio` y configurar credenciales en `.env` para activarlos.
 
-## Siguiente paso (Iteración 9)
+## Siguiente paso (Iteración 10)
 
 La próxima iteración según `docs/MVP_ROADMAP.md` es:
 
-### Multisucursal + Inventario
-- Backend: módulos `branches` (CRUD sucursales) e `inventory` (equipos + préstamos)
-- Frontend: gestión de sucursales, inventario con préstamos a miembros, branch selector en header
+### Configuración + Admin + Polish
+- Budget del bundle: ajustar `maximumBudget` en `angular.json`
+- Migrar `confirm()` nativos a `mat-dialog`
+- Migrar formularios a Angular Material
+- Charts con chart.js si es necesario
+- Panel de administración de usuarios
+- Configuración general del gimnasio
+- Roles y permisos
+- Electron builder + auto-update
 
-### Tip: el seed ya genera datos completos
+### Tip: el seed ya genera datos completos + createdById
 Si necesitás resetear la BD, solo hace falta:
 ```bash
 docker compose down -v && docker compose up -d
@@ -260,6 +282,7 @@ cd backend && pnpm build && pnpm migration:run && pnpm seed
 - Si Electron no carga, esperar 10-15s (retry loop, hasta 30 intentos)
 - El puerto 3000 puede quedar ocupado → `lsof -ti:3000 | xargs kill -9`
 - Tras seed, verificar que las clases y horarios se crearon en la BD antes de crear reservas
+- Si el login falla con `column "createdById" does not exist`, falta migración 0009 → `pnpm migration:run`
 
 ## Variables de entorno (`.env`)
 

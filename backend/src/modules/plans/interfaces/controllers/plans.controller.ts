@@ -7,6 +7,7 @@ import { UpdatePlanDto } from '../../application/dtos/update-plan.dto';
 import { QueryPlanDto } from '../../application/dtos/query-plan.dto';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 
 @Controller('plans')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -14,8 +15,8 @@ export class PlansController {
   constructor(private readonly plansService: PlansService) {}
 
   @Post()
-  create(@Body() dto: CreatePlanDto) {
-    return this.plansService.create(dto);
+  create(@Body() dto: CreatePlanDto, @CurrentUser('id') userId: string) {
+    return this.plansService.create(dto, userId);
   }
 
   @Get()

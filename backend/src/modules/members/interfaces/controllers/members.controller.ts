@@ -8,6 +8,7 @@ import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
 import { Roles } from '../../../../common/decorators/roles.decorator';
 import { UserRole } from '../../../users/domain/entities/user.entity';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 
 @Controller('members')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -15,8 +16,8 @@ export class MembersController {
   constructor(private readonly membersService: MembersService) {}
 
   @Post()
-  create(@Body() dto: CreateMemberDto) {
-    return this.membersService.create(dto);
+  create(@Body() dto: CreateMemberDto, @CurrentUser('id') userId: string) {
+    return this.membersService.create(dto, userId);
   }
 
   @Get()

@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } f
 import { BranchesService } from '../../application/services/branches.service';
 import { CreateBranchDto } from '../../application/dtos/create-branch.dto';
 import { UpdateBranchDto } from '../../application/dtos/update-branch.dto';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
 import { Roles } from '../../../../common/decorators/roles.decorator';
@@ -14,8 +15,8 @@ export class BranchesController {
 
   @Post()
   @Roles(UserRole.ADMIN)
-  create(@Body() dto: CreateBranchDto) {
-    return this.branchesService.create(dto);
+  create(@Body() dto: CreateBranchDto, @CurrentUser('id') userId: string) {
+    return this.branchesService.create(dto, userId);
   }
 
   @Get()

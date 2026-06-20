@@ -1,7 +1,8 @@
 import {
-  Entity, PrimaryGeneratedColumn, Column,
+  Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn,
   CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
 } from 'typeorm';
+import { User } from '../../../users/domain/entities/user.entity';
 
 @Entity('branches')
 export class Branch {
@@ -31,4 +32,11 @@ export class Branch {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

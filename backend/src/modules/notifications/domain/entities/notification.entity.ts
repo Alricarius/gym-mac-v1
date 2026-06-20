@@ -6,6 +6,7 @@ import {
 import { Member } from '../../../members/domain/entities/member.entity';
 import { NotificationType } from '../enums/notification-type.enum';
 import { NotificationChannel } from '../enums/notification-channel.enum';
+import { User } from '../../../users/domain/entities/user.entity';
 
 @Entity('notifications')
 export class Notification {
@@ -48,6 +49,13 @@ export class Notification {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({ nullable: true })
+  createdById?: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy?: User;
 
   @UpdateDateColumn()
   updatedAt: Date;

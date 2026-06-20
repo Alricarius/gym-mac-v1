@@ -21,9 +21,10 @@ export class InventoryItemsService {
     private readonly memberRepo: Repository<Member>,
   ) {}
 
-  async create(dto: CreateInventoryItemDto): Promise<InventoryItem> {
+  async create(dto: CreateInventoryItemDto, createdById: string): Promise<InventoryItem> {
     const item = this.itemRepo.create({
       ...dto,
+      createdById,
       availableQuantity: dto.totalQuantity ?? 1,
     });
     return this.itemRepo.save(item);
@@ -67,7 +68,7 @@ export class InventoryItemsService {
     await this.itemRepo.softDelete(id);
   }
 
-  async loan(id: string, dto: CreateLoanDto): Promise<InventoryLoan> {
+  async loan(id: string, dto: CreateLoanDto, createdById: string): Promise<InventoryLoan> {
     const item = await this.findById(id);
     const quantity = dto.quantity ?? 1;
 
@@ -85,6 +86,7 @@ export class InventoryItemsService {
       memberId: dto.memberId,
       quantity,
       notes: dto.notes,
+      createdById,
     });
 
     item.availableQuantity -= quantity;

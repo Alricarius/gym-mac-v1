@@ -68,7 +68,7 @@ export class CheckInsService {
     return { canEnter: true, member, subscription };
   }
 
-  async checkIn(dto: CreateCheckInDto) {
+  async checkIn(dto: CreateCheckInDto, createdById: string) {
     const branchId = dto.branchId;
     const verification = await this.verify(dto.memberId, branchId);
     if (!verification.canEnter) throw new BadRequestException(verification.reason);
@@ -77,6 +77,7 @@ export class CheckInsService {
       memberId: dto.memberId,
       type: CheckInType.ENTRY,
       branchId: branchId || (verification as any).member.branchId,
+      createdById,
     });
     const saved = await this.checkInRepo.save(checkIn);
     const result = await this.checkInRepo.findOne({
@@ -105,7 +106,7 @@ export class CheckInsService {
     return result;
   }
 
-  async checkOut(dto: CreateCheckInDto) {
+  async checkOut(dto: CreateCheckInDto, createdById: string) {
     const member = await this.memberRepo.findOne({ where: { id: dto.memberId } });
     if (!member) throw new NotFoundException('Member not found');
 
@@ -113,6 +114,7 @@ export class CheckInsService {
       memberId: dto.memberId,
       type: CheckInType.EXIT,
       branchId: dto.branchId || member.branchId,
+      createdById,
     });
     const saved = await this.checkInRepo.save(checkIn);
     const result = await this.checkInRepo.findOne({

@@ -13,8 +13,9 @@ export class PlansService {
     private readonly repo: Repository<Plan>,
   ) {}
 
-  async create(dto: CreatePlanDto): Promise<Plan> {
+  async create(dto: CreatePlanDto, createdById: string): Promise<Plan> {
     const plan = this.repo.create(dto);
+    plan.createdById = createdById;
     return this.repo.save(plan);
   }
 

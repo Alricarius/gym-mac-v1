@@ -12,12 +12,12 @@ export class BranchesService {
     private readonly repo: Repository<Branch>,
   ) {}
 
-  async create(dto: CreateBranchDto): Promise<Branch> {
+  async create(dto: CreateBranchDto, createdById: string): Promise<Branch> {
     if (dto.email) {
       const exists = await this.repo.findOne({ where: { email: dto.email } });
       if (exists) throw new ConflictException('Email already registered');
     }
-    const branch = this.repo.create(dto);
+    const branch = this.repo.create({ ...dto, createdById });
     return this.repo.save(branch);
   }
 

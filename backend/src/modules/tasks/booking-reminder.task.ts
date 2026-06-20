@@ -53,7 +53,7 @@ export class BookingReminderTask {
           channel: NotificationChannel.IN_APP,
           subject,
           body,
-        });
+        }, undefined);
 
         if (member.email) {
           await this.notificationsService.sendNotification({
@@ -62,7 +62,7 @@ export class BookingReminderTask {
             channel: NotificationChannel.EMAIL,
             subject,
             body,
-          });
+          }, undefined);
         }
 
         count++;

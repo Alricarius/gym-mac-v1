@@ -4,6 +4,7 @@ import {
   ManyToOne, JoinColumn,
 } from 'typeorm';
 import { GymClass } from './gym-class.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
 @Entity('schedules')
 export class Schedule {
@@ -30,6 +31,13 @@ export class Schedule {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 
   @ManyToOne(() => GymClass, (gymClass) => gymClass.schedules)
   @JoinColumn({ name: 'classId' })

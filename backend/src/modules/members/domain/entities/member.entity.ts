@@ -4,6 +4,7 @@ import {
   ManyToOne, JoinColumn,
 } from 'typeorm';
 import { Branch } from '../../../branches/domain/entities/branch.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
 export enum MemberGender {
   MALE = 'male',
@@ -63,4 +64,11 @@ export class Member {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

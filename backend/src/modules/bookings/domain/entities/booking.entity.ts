@@ -6,6 +6,7 @@ import {
 import { GymClass } from '../../../classes/domain/entities/gym-class.entity';
 import { Schedule } from '../../../classes/domain/entities/schedule.entity';
 import { Member } from '../../../members/domain/entities/member.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
 export enum BookingStatus {
   CONFIRMED = 'confirmed',
@@ -56,4 +57,11 @@ export class Booking {
   @ManyToOne(() => Member)
   @JoinColumn({ name: 'memberId' })
   member: Member;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

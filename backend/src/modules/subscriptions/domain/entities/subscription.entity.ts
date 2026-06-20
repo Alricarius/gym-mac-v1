@@ -3,6 +3,7 @@ import {
   CreateDateColumn, UpdateDateColumn,
   ManyToOne, JoinColumn,
 } from 'typeorm';
+import { User } from '../../../users/domain/entities/user.entity';
 import { Member } from '../../../members/domain/entities/member.entity';
 import { Plan } from '../../../plans/domain/entities/plan.entity';
 
@@ -59,4 +60,11 @@ export class Subscription {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

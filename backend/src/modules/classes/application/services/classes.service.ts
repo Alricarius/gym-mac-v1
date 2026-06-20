@@ -19,8 +19,8 @@ export class ClassesService {
     private readonly scheduleRepo: Repository<Schedule>,
   ) {}
 
-  async create(dto: CreateClassDto): Promise<GymClass> {
-    const gymClass = this.classRepo.create(dto);
+  async create(dto: CreateClassDto, createdById: string): Promise<GymClass> {
+    const gymClass = this.classRepo.create({ ...dto, createdById });
     return this.classRepo.save(gymClass);
   }
 
@@ -82,7 +82,7 @@ export class ClassesService {
     await this.classRepo.softRemove(gymClass);
   }
 
-  async addSchedule(classId: string, dto: CreateScheduleDto): Promise<Schedule> {
+  async addSchedule(classId: string, dto: CreateScheduleDto, createdById: string): Promise<Schedule> {
     const gymClass = await this.findById(classId);
     if (dto.startTime >= dto.endTime) {
       throw new BadRequestException('startTime must be before endTime');
@@ -90,6 +90,7 @@ export class ClassesService {
     const schedule = this.scheduleRepo.create({
       ...dto,
       classId: gymClass.id,
+      createdById,
     });
     return this.scheduleRepo.save(schedule);
   }

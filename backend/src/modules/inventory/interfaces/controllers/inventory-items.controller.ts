@@ -7,6 +7,7 @@ import { UpdateInventoryItemDto } from '../../application/dtos/update-inventory-
 import { QueryInventoryItemDto } from '../../application/dtos/query-inventory-item.dto';
 import { CreateLoanDto } from '../../application/dtos/create-loan.dto';
 import { ReturnLoanDto } from '../../application/dtos/return-loan.dto';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 
 @Controller('inventory')
@@ -15,8 +16,8 @@ export class InventoryItemsController {
   constructor(private readonly inventoryService: InventoryItemsService) {}
 
   @Post()
-  create(@Body() dto: CreateInventoryItemDto) {
-    return this.inventoryService.create(dto);
+  create(@Body() dto: CreateInventoryItemDto, @CurrentUser('id') userId: string) {
+    return this.inventoryService.create(dto, userId);
   }
 
   @Get()
@@ -40,8 +41,8 @@ export class InventoryItemsController {
   }
 
   @Post(':id/loan')
-  loan(@Param('id') id: string, @Body() dto: CreateLoanDto) {
-    return this.inventoryService.loan(id, dto);
+  loan(@Param('id') id: string, @Body() dto: CreateLoanDto, @CurrentUser('id') userId: string) {
+    return this.inventoryService.loan(id, dto, userId);
   }
 
   @Post(':id/return')

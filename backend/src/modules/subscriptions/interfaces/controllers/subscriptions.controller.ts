@@ -6,6 +6,7 @@ import { CreateSubscriptionDto } from '../../application/dtos/create-subscriptio
 import { QuerySubscriptionDto } from '../../application/dtos/query-subscription.dto';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 
 @Controller('subscriptions')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -13,8 +14,8 @@ export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   @Post()
-  create(@Body() dto: CreateSubscriptionDto) {
-    return this.subscriptionsService.create(dto);
+  create(@Body() dto: CreateSubscriptionDto, @CurrentUser('id') userId: string) {
+    return this.subscriptionsService.create(dto, userId);
   }
 
   @Get()

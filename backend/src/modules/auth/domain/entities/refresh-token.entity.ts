@@ -27,4 +27,11 @@ export class RefreshToken {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

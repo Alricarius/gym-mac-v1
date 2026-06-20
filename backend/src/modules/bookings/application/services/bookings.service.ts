@@ -24,7 +24,7 @@ export class BookingsService {
     private readonly subscriptionRepo: Repository<Subscription>,
   ) {}
 
-  async create(dto: CreateBookingDto): Promise<Booking> {
+  async create(dto: CreateBookingDto, createdById: string): Promise<Booking> {
     const gymClass = await this.classRepo.findOne({
       where: { id: dto.classId, isActive: true },
     });
@@ -76,6 +76,7 @@ export class BookingsService {
       memberId: dto.memberId,
       bookingDate: dto.bookingDate,
       status: isFull ? BookingStatus.WAITLISTED : BookingStatus.CONFIRMED,
+      createdById,
     });
 
     return this.bookingRepo.save(booking);

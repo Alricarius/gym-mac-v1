@@ -19,7 +19,7 @@ export class SubscriptionsService {
     private readonly plansService: PlansService,
   ) {}
 
-  async create(dto: CreateSubscriptionDto): Promise<Subscription> {
+  async create(dto: CreateSubscriptionDto, createdById: string): Promise<Subscription> {
     const plan = await this.plansService.findById(dto.planId);
 
     const activeSubscription = await this.repo.findOne({
@@ -40,6 +40,7 @@ export class SubscriptionsService {
       planId: dto.planId,
       startDate,
       endDate,
+      createdById,
     });
 
     const saved = await this.repo.save(subscription);
@@ -60,6 +61,7 @@ export class SubscriptionsService {
       notes: dto.paymentNotes,
       paidAt: now,
       branchId: dto.paymentBranchId,
+      createdById,
     });
 
     await this.paymentRepo.save(payment);

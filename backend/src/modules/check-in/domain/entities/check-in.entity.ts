@@ -4,6 +4,7 @@ import {
 } from 'typeorm';
 import { Member } from '../../../members/domain/entities/member.entity';
 import { Branch } from '../../../branches/domain/entities/branch.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
 export enum CheckInType {
   ENTRY = 'entry',
@@ -34,4 +35,11 @@ export class CheckIn {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 }

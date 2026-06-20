@@ -1,9 +1,11 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  ManyToOne, JoinColumn,
   OneToMany,
 } from 'typeorm';
 import { Schedule } from './schedule.entity';
+import { User } from '../../../users/domain/entities/user.entity';
 
 @Entity('classes')
 export class GymClass {
@@ -33,6 +35,13 @@ export class GymClass {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  @Column()
+  createdById: string;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdById' })
+  createdBy: User;
 
   @OneToMany(() => Schedule, (schedule) => schedule.gymClass)
   schedules: Schedule[];

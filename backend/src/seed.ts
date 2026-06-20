@@ -28,16 +28,20 @@ async function seed() {
   const dataSource = app.get(DataSource);
   const checkInRepo = dataSource.getRepository(CheckIn);
 
+  let adminId: string;
   try {
-    await usersService.create({
+    const admin = await usersService.create({
       email: 'admin@admin.com',
       password: 'Admin123',
       fullName: 'Admin Principal',
       role: 'admin' as any,
     });
+    adminId = admin.id;
     console.log('✓ Admin created');
   } catch (err: any) {
     if (err instanceof ConflictException || err?.status === 409) {
+      const existing = await usersService.findByEmail('admin@admin.com');
+      adminId = existing!.id;
       console.log('~ Admin already exists, skipping');
     } else {
       throw err;
@@ -55,7 +59,7 @@ async function seed() {
   const members: Member[] = [];
   for (const data of memberData) {
     try {
-      const member = await membersService.create(data);
+      const member = await membersService.create(data, adminId);
       members.push(member);
       console.log('✓ Member created:', member.fullName);
     } catch (err: any) {
@@ -79,7 +83,7 @@ async function seed() {
   const plans: Plan[] = [];
   for (const data of planData) {
     try {
-      const plan = await plansService.create(data);
+      const plan = await plansService.create(data, adminId);
       plans.push(plan);
       console.log('✓ Plan created:', plan.name);
     } catch (err: any) {
@@ -101,7 +105,7 @@ async function seed() {
   const branches: any[] = [];
   for (const data of branchData) {
     try {
-      const branch = await branchesService.create(data);
+      const branch = await branchesService.create(data, adminId);
       branches.push(branch);
       console.log('✓ Branch created:', branch.name);
     } catch (err: any) {
@@ -142,7 +146,7 @@ async function seed() {
         startDate: startDate.toISOString().split('T')[0],
         paymentMethod: cfg.method,
         paymentBranchId: memberBranch || norte.id,
-      });
+      }, adminId);
       console.log('✓ Subscription + Payment created for', cfg.member.fullName);
     } catch (err: any) {
       if (err?.status === 409) {
@@ -172,6 +176,7 @@ async function seed() {
           branchId,
           type: CheckInType.ENTRY,
           createdAt: entry,
+          createdById: adminId,
         });
         checkInCount++;
 
@@ -183,6 +188,7 @@ async function seed() {
             branchId,
             type: CheckInType.EXIT,
             createdAt: exit,
+            createdById: adminId,
           });
           checkInCount++;
         }
@@ -225,9 +231,9 @@ async function seed() {
     try {
       const c = await classesService.create({
         name: cd.name, description: cd.description, capacity: cd.capacity, color: cd.color,
-      });
+      }, adminId);
       for (const s of cd.schedules) {
-        await classesService.addSchedule(c.id, s);
+        await classesService.addSchedule(c.id, s, adminId);
       }
       console.log(`✓ Class created: ${c.name} with ${cd.schedules.length} schedules`);
     } catch (err: any) {
@@ -254,7 +260,7 @@ async function seed() {
           scheduleId: spinningSchedules[i].id,
           memberId: carlos.id,
           bookingDate: futureDates[i],
-        });
+        }, adminId);
         console.log(`✓ Booking created for Carlos → Spinning on ${futureDates[i]}`);
       } catch (err: any) {
         console.log(`~ Booking skipped: ${err.message}`);
@@ -269,7 +275,7 @@ async function seed() {
           scheduleId: firstScheduleId,
           memberId: juan.id,
           bookingDate: futureDates[0],
-        });
+        }, adminId);
         console.log(`✓ Booking created for Juan → Spinning on ${futureDates[0]}`);
       } catch (err: any) {
         console.log(`~ Booking skipped: ${err.message}`);
@@ -296,7 +302,7 @@ async function seed() {
   for (const { branch, items } of inventoryByBranch) {
     for (const data of items) {
       try {
-        await inventoryService.create({ branchId: branch.id, ...data });
+        await inventoryService.create({ branchId: branch.id, ...data }, adminId);
         console.log('✓ Inventory created:', data.name, '->', branch.name);
       } catch (err: any) {
         console.log('~ Inventory already exists, skipping:', data.name);
@@ -309,7 +315,7 @@ async function seed() {
       .find((i: any) => i.name === 'Pesa 10kg');
     if (pesas) {
       try {
-        await inventoryService.loan(pesas.id, { memberId: carlos.id, quantity: 1, notes: 'Préstamo demo' });
+        await inventoryService.loan(pesas.id, { memberId: carlos.id, quantity: 1, notes: 'Préstamo demo' }, adminId);
         console.log('✓ Demo loan: Carlos López borrowed Pesa 10kg from Sucursal Norte');
       } catch (err: any) {
         console.log('~ Demo loan skipped:', err.message);

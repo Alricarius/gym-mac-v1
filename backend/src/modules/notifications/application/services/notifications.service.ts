@@ -21,13 +21,14 @@ export class NotificationsService {
     private readonly inAppChannel: InAppChannelService,
   ) {}
 
-  async sendNotification(dto: CreateNotificationDto): Promise<Notification> {
+  async sendNotification(dto: CreateNotificationDto, createdById?: string): Promise<Notification> {
     const notification = this.notificationRepo.create({
       memberId: dto.memberId,
       type: dto.type,
       channel: dto.channel,
       subject: dto.subject,
       body: dto.body,
+      createdById,
     });
 
     const saved = await this.notificationRepo.save(notification);
@@ -113,14 +114,14 @@ export class NotificationsService {
       body,
     };
 
-    await this.sendNotification({ ...baseDto, channel: NotificationChannel.IN_APP });
+    await this.sendNotification({ ...baseDto, channel: NotificationChannel.IN_APP }, undefined);
 
     if (payload.memberEmail) {
-      await this.sendNotification({ ...baseDto, channel: NotificationChannel.EMAIL });
+      await this.sendNotification({ ...baseDto, channel: NotificationChannel.EMAIL }, undefined);
     }
 
     if (payload.memberPhone) {
-      await this.sendNotification({ ...baseDto, channel: NotificationChannel.WHATSAPP });
+      await this.sendNotification({ ...baseDto, channel: NotificationChannel.WHATSAPP }, undefined);
     }
   }
 }

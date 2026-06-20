@@ -7,6 +7,7 @@ import { CreateClassDto } from '../../application/dtos/create-class.dto';
 import { UpdateClassDto } from '../../application/dtos/update-class.dto';
 import { QueryClassDto } from '../../application/dtos/query-class.dto';
 import { CreateScheduleDto } from '../../application/dtos/create-schedule.dto';
+import { CurrentUser } from '../../../../common/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
 
@@ -16,8 +17,8 @@ export class ClassesController {
   constructor(private readonly classesService: ClassesService) {}
 
   @Post()
-  create(@Body() dto: CreateClassDto) {
-    return this.classesService.create(dto);
+  create(@Body() dto: CreateClassDto, @CurrentUser('id') userId: string) {
+    return this.classesService.create(dto, userId);
   }
 
   @Get()
@@ -41,8 +42,8 @@ export class ClassesController {
   }
 
   @Post(':id/schedules')
-  addSchedule(@Param('id') id: string, @Body() dto: CreateScheduleDto) {
-    return this.classesService.addSchedule(id, dto);
+  addSchedule(@Param('id') id: string, @Body() dto: CreateScheduleDto, @CurrentUser('id') userId: string) {
+    return this.classesService.addSchedule(id, dto, userId);
   }
 
   @Delete(':id/schedules/:scheduleId')
