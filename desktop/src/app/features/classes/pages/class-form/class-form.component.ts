@@ -2,6 +2,10 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ClassService, GymClass, CreateClassDto, Schedule, CreateScheduleDto } from '../../services/class.service';
 
@@ -10,43 +14,45 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
 @Component({
   selector: 'app-class-form',
   standalone: true,
-  imports: [FormsModule, MatButtonModule, MatIconModule],
+  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatCardModule, MatIconModule],
   template: `
-    <div class="page">
-      <div class="page-header">
-        <h1>{{ isEdit ? 'Editar clase' : 'Nueva clase' }}</h1>
-        <button class="btn-secondary" (click)="cancel()">Volver</button>
+    <div class="p-6 max-w-2xl">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="m-0 text-xl text-gray-900">{{ isEdit ? 'Editar clase' : 'Nueva clase' }}</h1>
+        <button mat-stroked-button (click)="cancel()">Volver</button>
       </div>
 
-      <div class="card">
-        <form (ngSubmit)="onSubmit()" #form="ngForm">
-          <div class="form-row">
-            <div class="form-group flex-1">
-              <label for="name">Nombre *</label>
-              <input id="name" type="text" [(ngModel)]="dto.name" name="name" required placeholder="Ej: Spinning" />
-            </div>
-            <div class="form-group w-32">
-              <label for="capacity">Capacidad *</label>
-              <input id="capacity" type="number" [(ngModel)]="dto.capacity" name="capacity" required min="1" />
-            </div>
-            <div class="form-group w-40">
-              <label for="color">Color</label>
-              <div class="flex gap-2 items-center">
-                <input id="color" type="color" [(ngModel)]="dto.color" name="color" class="!w-10 !h-10 !p-0.5 !cursor-pointer" />
-                <input type="text" [(ngModel)]="dto.color" name="colorText" maxlength="7" placeholder="#667eea" class="flex-1" />
+      <mat-card>
+        <form (ngSubmit)="onSubmit()" #form="ngForm" class="p-4">
+          <div class="flex gap-4">
+            <mat-form-field appearance="outline" class="flex-1">
+              <mat-label>Nombre *</mat-label>
+              <input matInput id="name" type="text" [(ngModel)]="dto.name" name="name" required placeholder="Ej: Spinning" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-32">
+              <mat-label>Capacidad *</mat-label>
+              <input matInput id="capacity" type="number" [(ngModel)]="dto.capacity" name="capacity" required min="1" />
+            </mat-form-field>
+            <div class="w-40">
+              <span class="text-sm font-medium text-gray-700">Color</span>
+              <div class="flex gap-2 items-center mt-1">
+                <input id="color" type="color" [(ngModel)]="dto.color" name="color" class="w-10 h-10 p-0.5 cursor-pointer border-0" />
+                <mat-form-field appearance="outline" class="flex-1">
+                  <input matInput type="text" [(ngModel)]="dto.color" name="colorText" maxlength="7" placeholder="#667eea" />
+                </mat-form-field>
               </div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="description">Descripción</label>
-            <textarea id="description" [(ngModel)]="dto.description" name="description" rows="2" placeholder="Descripción opcional..."></textarea>
-          </div>
+          <mat-form-field appearance="outline" class="w-full mt-4">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput id="description" [(ngModel)]="dto.description" name="description" rows="2" placeholder="Descripción opcional..."></textarea>
+          </mat-form-field>
 
           <div class="border-t border-gray-200 pt-4 mt-4">
             <div class="flex items-center justify-between mb-3">
-              <label class="!mb-0 font-semibold text-sm text-gray-700">Horarios</label>
-              <button type="button" class="btn-secondary text-sm !py-1.5 !px-3" (click)="addSchedule()">
+              <span class="font-semibold text-sm text-gray-700">Horarios</span>
+              <button mat-stroked-button type="button" (click)="addSchedule()">
                 <mat-icon class="text-sm">add</mat-icon> Agregar horario
               </button>
             </div>
@@ -55,23 +61,23 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
             }
             @for (s of schedules(); track $index; let i = $index) {
               <div class="flex gap-3 items-end mb-2 p-3 bg-gray-50 rounded-lg">
-                <div class="form-group !mb-0 flex-1">
-                  <label class="text-xs">Día</label>
-                  <select [(ngModel)]="s.dayOfWeek" name="day_{{$index}}" class="!py-2">
+                <mat-form-field appearance="outline" class="flex-1">
+                  <mat-label>Día</mat-label>
+                  <mat-select [(ngModel)]="s.dayOfWeek" name="day_{{$index}}">
                     @for (d of DAY_NAMES; track $index) {
-                      <option [value]="$index">{{ d }}</option>
+                      <mat-option [value]="$index">{{ d }}</mat-option>
                     }
-                  </select>
+                  </mat-select>
+                </mat-form-field>
+                <div class="w-28">
+                  <label class="text-xs font-medium text-gray-700 mb-1 block">Desde</label>
+                  <input type="time" [(ngModel)]="s.startTime" name="start_{{$index}}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
                 </div>
-                <div class="form-group !mb-0 w-28">
-                  <label class="text-xs">Desde</label>
-                  <input type="time" [(ngModel)]="s.startTime" name="start_{{$index}}" class="!py-2" />
+                <div class="w-28">
+                  <label class="text-xs font-medium text-gray-700 mb-1 block">Hasta</label>
+                  <input type="time" [(ngModel)]="s.endTime" name="end_{{$index}}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
                 </div>
-                <div class="form-group !mb-0 w-28">
-                  <label class="text-xs">Hasta</label>
-                  <input type="time" [(ngModel)]="s.endTime" name="end_{{$index}}" class="!py-2" />
-                </div>
-                <button type="button" class="btn-icon !text-red-500" (click)="removeSchedule(i)">
+                <button mat-icon-button type="button" (click)="removeSchedule(i)" class="text-red-500">
                   <mat-icon>close</mat-icon>
                 </button>
               </div>
@@ -79,40 +85,20 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
           </div>
 
           @if (error) {
-            <p class="error-msg">{{ error }}</p>
+            <p class="text-red-500 text-sm mb-4">{{ error }}</p>
           }
 
-          <div class="form-actions">
-            <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
-            <button type="submit" class="btn-primary" [disabled]="submitting">
+          <div class="flex justify-end gap-3 mt-2">
+            <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+            <button mat-flat-button type="submit" color="primary" [disabled]="submitting">
               {{ submitting ? 'Guardando...' : 'Guardar' }}
             </button>
           </div>
         </form>
-      </div>
+      </mat-card>
     </div>
   `,
-  styles: [`
-    .page { padding: 24px; max-width: 720px; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
-    .card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 24px; }
-    .form-row { display: flex; gap: 16px; }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #333; }
-    input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #667eea; }
-    textarea { resize: vertical; }
-    .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
-    .btn-primary { padding: 10px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover:not(:disabled) { background: #5a6fd6; }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { padding: 10px 24px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-    .btn-secondary:hover { background: #f5f5f5; }
-    .btn-icon { background: none; border: none; cursor: pointer; padding: 6px; border-radius: 6px; display: flex; align-items: center; transition: background 0.2s; }
-    .btn-icon:hover { background: #f5f5f5; }
-  `],
+  styles: [],
 })
 export class ClassFormComponent implements OnInit {
   readonly DAY_NAMES = DAY_NAMES;

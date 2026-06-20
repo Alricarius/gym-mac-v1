@@ -97,6 +97,18 @@ import { BranchStore } from '../../core/services/branch-store.service';
             <mat-icon class="mr-3 text-lg">bar_chart</mat-icon>
             <span>Reportes</span>
           </a>
+          @if (authStore.user()?.role === 'admin') {
+            <a mat-list-item routerLink="/users" routerLinkActive="active"
+               class="text-white/70 hover:text-white rounded-lg mb-0.5">
+              <mat-icon class="mr-3 text-lg">manage_accounts</mat-icon>
+              <span>Usuarios</span>
+            </a>
+            <a mat-list-item routerLink="/settings" routerLinkActive="active"
+               class="text-white/70 hover:text-white rounded-lg mb-0.5">
+              <mat-icon class="mr-3 text-lg">settings</mat-icon>
+              <span>Configuración</span>
+            </a>
+          }
           <a mat-list-item routerLink="/notifications" routerLinkActive="active"
              class="text-white/70 hover:text-white rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">notifications</mat-icon>

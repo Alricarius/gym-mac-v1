@@ -211,6 +211,34 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/users/pages/user-list/user-list.component').then(
+            (m) => m.UserListComponent,
+          ),
+      },
+      {
+        path: 'users/new',
+        loadComponent: () =>
+          import('./features/users/pages/user-form/user-form.component').then(
+            (m) => m.UserFormComponent,
+          ),
+      },
+      {
+        path: 'users/:id',
+        loadComponent: () =>
+          import('./features/users/pages/user-form/user-form.component').then(
+            (m) => m.UserFormComponent,
+          ),
+      },
+      {
+        path: 'settings',
+        loadComponent: () =>
+          import('./features/settings/pages/settings/settings.component').then(
+            (m) => m.SettingsComponent,
+          ),
+      },
+      {
         path: 'notifications',
         loadComponent: () =>
           import('./features/notifications/pages/notification-center/notification-center.component').then(

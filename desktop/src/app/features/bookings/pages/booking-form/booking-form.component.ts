@@ -6,6 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BookingService, CreateBookingDto } from '../../services/booking.service';
 import { ClassService, GymClass } from '../../../classes/services/class.service';
 import { MemberService, Member } from '../../../members/services/member.service';
@@ -100,6 +101,7 @@ import { MemberService, Member } from '../../../members/services/member.service'
 })
 export class BookingFormComponent implements OnInit {
   readonly DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  private readonly snackBar = inject(MatSnackBar);
   private readonly bookingService = inject(BookingService);
   private readonly classService = inject(ClassService);
   private readonly memberService = inject(MemberService);
@@ -168,7 +170,7 @@ export class BookingFormComponent implements OnInit {
     this.bookingService.create(this.dto).subscribe({
       next: (res) => {
         const msg = res.status === 'waitlisted' ? 'Clase llena. Se agregó a lista de espera.' : 'Reserva confirmada.';
-        alert(msg);
+        this.snackBar.open(msg, 'Cerrar', { duration: 5000 });
         this.router.navigate(['/bookings']);
       },
       error: (err) => {

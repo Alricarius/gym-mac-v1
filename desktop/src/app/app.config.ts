@@ -4,6 +4,8 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 
@@ -14,6 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([authInterceptor])),
     provideAnimations(),
     provideNativeDateAdapter(),
-    importProvidersFrom(MatSnackBarModule),
+    importProvidersFrom(MatSnackBarModule, MatDialogModule),
+    provideCharts(withDefaultRegisterables()),
   ],
 };

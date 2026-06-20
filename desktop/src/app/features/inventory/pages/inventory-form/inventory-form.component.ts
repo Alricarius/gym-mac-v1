@@ -1,85 +1,74 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
 import { InventoryItemService, CreateInventoryItemDto } from '../../services/inventory-item.service';
 import { BranchStore, Branch } from '../../../../core/services/branch-store.service';
 
 @Component({
   selector: 'app-inventory-form',
   standalone: true,
-  imports: [FormsModule, MatSelectModule, MatFormFieldModule, MatInputModule],
+  imports: [FormsModule, MatButtonModule, MatCardModule, MatFormFieldModule, MatInputModule, MatSelectModule],
   template: `
     <div class="page">
       <div class="page-header">
         <h1>{{ isEdit ? 'Editar equipo' : 'Nuevo equipo' }}</h1>
-        <button class="btn-secondary" (click)="cancel()">Volver</button>
+        <button mat-stroked-button (click)="cancel()">Volver</button>
       </div>
 
-      <div class="card">
+      <mat-card>
         <form (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label for="branchId">Sucursal *</label>
-            <select id="branchId" [(ngModel)]="dto.branchId" name="branchId" required>
-              <option value="">Seleccionar sucursal</option>
+          <mat-form-field appearance="outline">
+            <mat-label>Sucursal *</mat-label>
+            <mat-select id="branchId" [(ngModel)]="dto.branchId" name="branchId" required>
+              <mat-option value="">Seleccionar sucursal</mat-option>
               @for (branch of branches(); track branch.id) {
-                <option [value]="branch.id">{{ branch.name }}</option>
+                <mat-option [value]="branch.id">{{ branch.name }}</mat-option>
               }
-            </select>
-          </div>
+            </mat-select>
+          </mat-form-field>
 
-          <div class="form-group">
-            <label for="name">Nombre del equipo *</label>
-            <input id="name" type="text" [(ngModel)]="dto.name" name="name" required placeholder="Ej: Pesa 10kg" />
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre del equipo *</mat-label>
+            <input id="name" matInput type="text" [(ngModel)]="dto.name" name="name" required placeholder="Ej: Pesa 10kg" />
+          </mat-form-field>
 
-          <div class="form-group">
-            <label for="description">Descripción</label>
-            <textarea id="description" [(ngModel)]="dto.description" name="description" rows="2" placeholder="Descripción del equipo..."></textarea>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <textarea id="description" matInput [(ngModel)]="dto.description" name="description" rows="2" placeholder="Descripción del equipo..."></textarea>
+          </mat-form-field>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="totalQuantity">Cantidad total</label>
-              <input id="totalQuantity" type="number" min="1" [(ngModel)]="dto.totalQuantity" name="totalQuantity" />
-            </div>
-          </div>
+          <mat-form-field appearance="outline">
+            <mat-label>Cantidad total</mat-label>
+            <input id="totalQuantity" matInput type="number" min="1" [(ngModel)]="dto.totalQuantity" name="totalQuantity" />
+          </mat-form-field>
 
           @if (error) {
             <p class="error-msg">{{ error }}</p>
           }
 
           <div class="form-actions">
-            <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
-            <button type="submit" class="btn-primary" [disabled]="submitting">
+            <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
               {{ submitting ? 'Guardando...' : 'Guardar' }}
             </button>
           </div>
         </form>
-      </div>
+      </mat-card>
     </div>
   `,
   styles: [`
     .page { padding: 24px; max-width: 600px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
     .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
-    .card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 24px; }
-    .form-row { display: flex; gap: 16px; }
-    .form-row .form-group { flex: 1; }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #333; }
-    input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #667eea; }
-    textarea { resize: vertical; }
+    mat-card { padding: 24px; }
+    mat-form-field { width: 100%; margin-bottom: 4px; }
     .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
-    .btn-primary { padding: 10px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover:not(:disabled) { background: #5a6fd6; }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { padding: 10px 24px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-    .btn-secondary:hover { background: #f5f5f5; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
   `],
 })
 export class InventoryFormComponent implements OnInit {

@@ -7,14 +7,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MemberService, Member } from '../../services/member.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-member-list',
   standalone: true,
   imports: [
     FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule,
-    MatIconModule, MatPaginatorModule, MatCardModule,
+    MatIconModule, MatPaginatorModule, MatCardModule, MatDialogModule,
   ],
   template: `
     <div class="page">
@@ -92,6 +94,7 @@ import { MemberService, Member } from '../../services/member.service';
 export class MemberListComponent implements OnInit {
   private readonly memberService = inject(MemberService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   readonly members = signal<Member[]>([]);
   readonly loading = signal(false);
@@ -125,7 +128,11 @@ export class MemberListComponent implements OnInit {
   create(): void { this.router.navigate(['/members/new']); }
   edit(member: Member): void { this.router.navigate(['/members', member.id]); }
   delete(member: Member): void {
-    if (!confirm(`¿Eliminar a ${member.fullName}?`)) return;
-    this.memberService.remove(member.id).subscribe(() => this.loadMembers());
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Eliminar socio', message: `¿Eliminar a ${member.fullName}?` },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) this.memberService.remove(member.id).subscribe(() => this.loadMembers());
+    });
   }
 }

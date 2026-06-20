@@ -17,6 +17,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
 import { TasksModule } from './modules/tasks/tasks.module';
 import { BranchesModule } from './modules/branches/branches.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
+import { SettingsModule } from './modules/settings/settings.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { InventoryModule } from './modules/inventory/inventory.module';
     TasksModule,
     BranchesModule,
     InventoryModule,
+    SettingsModule,
   ],
 })
 export class AppModule {}

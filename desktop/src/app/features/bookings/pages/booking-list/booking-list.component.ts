@@ -9,6 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { BookingService, Booking } from '../../services/booking.service';
 import { ClassService, GymClass } from '../../../classes/services/class.service';
 
@@ -121,6 +123,7 @@ const STATUS_LABELS: Record<string, string> = {
 })
 export class BookingListComponent implements OnInit {
   readonly STATUS_LABELS = STATUS_LABELS;
+  private readonly dialog = inject(MatDialog);
   private readonly bookingService = inject(BookingService);
   private readonly classService = inject(ClassService);
   private readonly router = inject(Router);
@@ -172,8 +175,12 @@ export class BookingListComponent implements OnInit {
   }
 
   cancelBooking(b: Booking): void {
-    if (!confirm('¿Cancelar esta reserva?')) return;
-    this.bookingService.updateStatus(b.id, { status: 'cancelled' }).subscribe(() => this.loadBookings());
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Cancelar reserva', message: '¿Cancelar esta reserva?' },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) this.bookingService.updateStatus(b.id, { status: 'cancelled' }).subscribe(() => this.loadBookings());
+    });
   }
 
   markAttended(b: Booking): void {

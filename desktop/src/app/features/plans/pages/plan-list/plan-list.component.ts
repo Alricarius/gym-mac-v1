@@ -2,18 +2,20 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { PlanService, Plan } from '../../services/plan.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-plan-list',
   standalone: true,
   imports: [
-    FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule,
+    FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatInputModule,
     MatIconModule, MatPaginatorModule, MatCardModule,
   ],
   template: `
@@ -94,6 +96,7 @@ import { PlanService, Plan } from '../../services/plan.service';
 export class PlanListComponent implements OnInit {
   private readonly planService = inject(PlanService);
   private readonly router = inject(Router);
+  private readonly dialog = inject(MatDialog);
 
   readonly plans = signal<Plan[]>([]);
   readonly loading = signal(false);
@@ -127,7 +130,11 @@ export class PlanListComponent implements OnInit {
   create(): void { this.router.navigate(['/plans/new']); }
   edit(plan: Plan): void { this.router.navigate(['/plans', plan.id]); }
   delete(plan: Plan): void {
-    if (!confirm(`¿Eliminar el plan "${plan.name}"?`)) return;
-    this.planService.remove(plan.id).subscribe(() => this.loadPlans());
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Eliminar plan', message: `¿Eliminar el plan "${plan.name}"?` },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) this.planService.remove(plan.id).subscribe(() => this.loadPlans());
+    });
   }
 }

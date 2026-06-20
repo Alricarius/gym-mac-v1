@@ -12,6 +12,7 @@
     "electron:dev": "tsc -p tsconfig.electron.json && NODE_ENV=development electron dist-electron/main.js",
     "electron:build": "ng build && tsc -p tsconfig.electron.json && electron-builder"
   },
+  "main": "dist-electron/main.js",
   "private": true,
   "dependencies": {
     "@angular/animations": "^18.2.0",
@@ -24,6 +25,8 @@
     "@angular/platform-browser": "^18.2.0",
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
+    "chart.js": "^4.5.1",
+    "ng2-charts": "^10.0.0",
     "rxjs": "~7.8.0",
     "socket.io-client": "^4.8.3",
     "tslib": "^2.3.0",

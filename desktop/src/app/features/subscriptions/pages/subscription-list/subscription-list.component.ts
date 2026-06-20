@@ -2,9 +2,11 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
 import { SubscriptionService, Subscription } from '../../services/subscription.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-subscription-list',
@@ -97,6 +99,7 @@ import { SubscriptionService, Subscription } from '../../services/subscription.s
   `,
 })
 export class SubscriptionListComponent implements OnInit {
+  private readonly dialog = inject(MatDialog);
   private readonly subscriptionService = inject(SubscriptionService);
   private readonly router = inject(Router);
 
@@ -129,18 +132,30 @@ export class SubscriptionListComponent implements OnInit {
   create(): void { this.router.navigate(['/subscriptions/new']); }
 
   pause(sub: Subscription): void {
-    if (!confirm(`¿Pausar la suscripción de ${sub.member?.fullName ?? 'este miembro'}?`)) return;
-    this.subscriptionService.pause(sub.id).subscribe(() => this.loadSubscriptions());
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Pausar suscripción', message: `¿Pausar la suscripción de ${sub.member?.fullName ?? 'este miembro'}?` },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) this.subscriptionService.pause(sub.id).subscribe(() => this.loadSubscriptions());
+    });
   }
 
   resume(sub: Subscription): void {
-    if (!confirm(`¿Reanudar la suscripción de ${sub.member?.fullName ?? 'este miembro'}?`)) return;
-    this.subscriptionService.resume(sub.id).subscribe(() => this.loadSubscriptions());
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Reanudar suscripción', message: `¿Reanudar la suscripción de ${sub.member?.fullName ?? 'este miembro'}?` },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) this.subscriptionService.resume(sub.id).subscribe(() => this.loadSubscriptions());
+    });
   }
 
   cancel(sub: Subscription): void {
-    if (!confirm(`¿Cancelar la suscripción de ${sub.member?.fullName ?? 'este miembro'}?`)) return;
-    this.subscriptionService.cancel(sub.id).subscribe(() => this.loadSubscriptions());
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Cancelar suscripción', message: `¿Cancelar la suscripción de ${sub.member?.fullName ?? 'este miembro'}?` },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) this.subscriptionService.cancel(sub.id).subscribe(() => this.loadSubscriptions());
+    });
   }
 
   statusLabel(status: string): string {

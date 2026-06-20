@@ -1,0 +1,44 @@
+appId: com.gymadmin.app
+productName: GymAdmin
+copyright: Copyright © 2026
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist-electron/**/*
+  - dist/gym-desktop/browser/**/*
+
+mac:
+  category: public.app-category.business
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: build/icon.icns
+  artifactName: "${productName}-${version}-mac-${arch}.${ext}"
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+  artifactName: "${productName}-${version}-win-${arch}.${ext}"
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  category: Office
+  icon: build/icon.png
+  artifactName: "${productName}-${version}-linux-${arch}.${ext}"

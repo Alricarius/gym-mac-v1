@@ -1,108 +1,107 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MemberService, Member, CreateMemberDto } from '../../services/member.service';
 import { BranchStore, Branch } from '../../../../core/services/branch-store.service';
 
 @Component({
   selector: 'app-member-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule,
+    MatSelectModule, MatDatepickerModule, MatCardModule, MatNativeDateModule,
+  ],
   template: `
     <div class="page">
-      <div class="page-header">
-        <h1>{{ isEdit ? 'Editar socio' : 'Nuevo socio' }}</h1>
-        <button class="btn-secondary" (click)="cancel()">Volver</button>
-      </div>
-
-      <div class="card">
-        <form (ngSubmit)="onSubmit()" #form="ngForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="fullName">Nombre completo *</label>
-              <input id="fullName" type="text" [(ngModel)]="dto.fullName" name="fullName" required placeholder="Nombre del socio" />
+      <mat-card class="!rounded-xl !shadow-sm">
+        <mat-card-header class="!pb-4">
+          <mat-card-title>{{ isEdit ? 'Editar socio' : 'Nuevo socio' }}</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <form (ngSubmit)="onSubmit()" #form="ngForm">
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Nombre completo *</mat-label>
+                <input matInput [(ngModel)]="dto.fullName" name="fullName" required placeholder="Nombre del socio" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" [(ngModel)]="dto.email" name="email" placeholder="correo@ejemplo.com" />
+              </mat-form-field>
             </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input id="email" type="email" [(ngModel)]="dto.email" name="email" placeholder="correo@ejemplo.com" />
+
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Teléfono</mat-label>
+                <input matInput [(ngModel)]="dto.phone" name="phone" placeholder="555-0100" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Fecha de nacimiento</mat-label>
+                <input matInput [matDatepicker]="picker" [(ngModel)]="birthDate" name="birthDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker" />
+                <mat-datepicker #picker />
+              </mat-form-field>
             </div>
-          </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="phone">Teléfono</label>
-              <input id="phone" type="text" [(ngModel)]="dto.phone" name="phone" placeholder="555-0100" />
+            <div class="form-row">
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Género</mat-label>
+                <mat-select [(ngModel)]="dto.gender" name="gender">
+                  <mat-option value="">Seleccionar</mat-option>
+                  <mat-option value="male">Masculino</mat-option>
+                  <mat-option value="female">Femenino</mat-option>
+                  <mat-option value="other">Otro</mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="flex-1">
+                <mat-label>Dirección</mat-label>
+                <input matInput [(ngModel)]="dto.address" name="address" placeholder="Dirección" />
+              </mat-form-field>
             </div>
-            <div class="form-group">
-              <label for="birthDate">Fecha de nacimiento</label>
-              <input id="birthDate" type="date" [(ngModel)]="dto.birthDate" name="birthDate" />
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Sucursal</mat-label>
+              <mat-select [(ngModel)]="dto.branchId" name="branchId">
+                <mat-option value="">Sin asignar</mat-option>
+                @for (branch of branches(); track branch.id) {
+                  <mat-option [value]="branch.id">{{ branch.name }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Notas</mat-label>
+              <textarea matInput [(ngModel)]="dto.notes" name="notes" rows="3" placeholder="Notas adicionales..."></textarea>
+            </mat-form-field>
+
+            @if (error) {
+              <p class="error-msg">{{ error }}</p>
+            }
+
+            <div class="form-actions">
+              <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
+                {{ submitting ? 'Guardando...' : 'Guardar' }}
+              </button>
             </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label for="gender">Género</label>
-              <select id="gender" [(ngModel)]="dto.gender" name="gender">
-                <option value="">Seleccionar</option>
-                <option value="male">Masculino</option>
-                <option value="female">Femenino</option>
-                <option value="other">Otro</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label for="address">Dirección</label>
-              <input id="address" type="text" [(ngModel)]="dto.address" name="address" placeholder="Dirección" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="branchId">Sucursal</label>
-            <select id="branchId" [(ngModel)]="dto.branchId" name="branchId">
-              <option value="">Sin asignar</option>
-              @for (branch of branches(); track branch.id) {
-                <option [value]="branch.id">{{ branch.name }}</option>
-              }
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="notes">Notas</label>
-            <textarea id="notes" [(ngModel)]="dto.notes" name="notes" rows="3" placeholder="Notas adicionales..."></textarea>
-          </div>
-
-          @if (error) {
-            <p class="error-msg">{{ error }}</p>
-          }
-
-          <div class="form-actions">
-            <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
-            <button type="submit" class="btn-primary" [disabled]="submitting">
-              {{ submitting ? 'Guardando...' : 'Guardar' }}
-            </button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styles: [`
     .page { padding: 24px; max-width: 720px; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
-    .card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 24px; }
     .form-row { display: flex; gap: 16px; }
-    .form-row .form-group { flex: 1; }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #333; }
-    input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #667eea; }
-    textarea { resize: vertical; }
+    .form-row mat-form-field { flex: 1; }
     .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
     .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
-    .btn-primary { padding: 10px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover:not(:disabled) { background: #5a6fd6; }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { padding: 10px 24px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-    .btn-secondary:hover { background: #f5f5f5; }
   `],
 })
 export class MemberFormComponent implements OnInit {
@@ -125,6 +124,7 @@ export class MemberFormComponent implements OnInit {
     notes: '',
     branchId: '',
   };
+  birthDate: Date | null = null;
   submitting = false;
   error = '';
 
@@ -150,6 +150,7 @@ export class MemberFormComponent implements OnInit {
             notes: member.notes || '',
             branchId: member.branchId || '',
           };
+          this.birthDate = member.birthDate ? new Date(member.birthDate) : null;
         },
         error: () => this.router.navigate(['/members']),
       });
@@ -165,6 +166,7 @@ export class MemberFormComponent implements OnInit {
     this.error = '';
 
     const cleaned = { ...this.dto };
+    cleaned.birthDate = this.birthDate ? this.birthDate.toISOString().split('T')[0] : '';
     Object.keys(cleaned).forEach((k) => {
       if (!(cleaned as any)[k]) delete (cleaned as any)[k];
     });

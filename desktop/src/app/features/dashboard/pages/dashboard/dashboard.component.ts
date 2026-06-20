@@ -1,17 +1,20 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
-import { DatePipe, DecimalPipe, NgClass } from '@angular/common';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
+import { ChartData, ChartOptions } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 import { ReportService, DashboardData } from '../../../reports/services/report.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    DatePipe, DecimalPipe, NgClass,
+    DatePipe, DecimalPipe,
     MatCardModule, MatIconModule, MatDividerModule, MatButtonModule,
+    BaseChartDirective,
   ],
   template: `
     <div class="p-8">
@@ -92,17 +95,12 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
             </mat-card-header>
             <mat-card-content class="p-5">
               @if (dashboard()!.incomeLast7Days.length) {
-                <div class="flex items-end gap-3 h-48 pt-4">
-                  @for (day of dashboard()!.incomeLast7Days; track day.date) {
-                    <div class="flex-1 flex flex-col items-center gap-2">
-                      @let barHeight = maxIncome > 0 ? (day.total / maxIncome) * 100 : 0;
-                      <div class="w-full bg-blue-500 rounded-t-md transition-all duration-300"
-                           [style.height.%]="barHeight > 0 ? barHeight : 2"
-                           [style.min-height.px]="barHeight > 0 ? 0 : 4">
-                      </div>
-                      <span class="text-xs text-gray-500">{{ day.date | date:'dd/MM' }}</span>
-                    </div>
-                  }
+                <div class="relative" style="height: 240px">
+                  <canvas baseChart
+                    [data]="chartData()"
+                    [options]="chartOptions"
+                    type="bar">
+                  </canvas>
                 </div>
               } @else {
                 <p class="text-gray-400 text-center py-8">No hay ingresos registrados en los últimos 7 días</p>
@@ -152,6 +150,39 @@ export class DashboardComponent implements OnInit {
   readonly loading = signal(true);
   readonly error = signal('');
 
+  readonly chartData = computed<ChartData<'bar'>>(() => {
+    const data = this.dashboard();
+    const labels: string[] = [];
+    const values: number[] = [];
+    for (const day of data?.incomeLast7Days ?? []) {
+      labels.push(new Date(day.date).toLocaleDateString('es', { weekday: 'short', day: 'numeric' }));
+      values.push(day.total);
+    }
+    return {
+      labels,
+      datasets: [{
+        label: 'Ingresos',
+        data: values,
+        backgroundColor: '#667eea',
+        borderRadius: 6,
+      }],
+    };
+  });
+
+  readonly chartOptions: ChartOptions<'bar'> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { callback: (v) => '$' + v },
+      },
+    },
+  };
+
   ngOnInit(): void {
     this.loadDashboard();
   }
@@ -172,11 +203,5 @@ export class DashboardComponent implements OnInit {
         this.loading.set(false);
       },
     });
-  }
-
-  get maxIncome(): number {
-    const data = this.dashboard();
-    if (!data?.incomeLast7Days?.length) return 0;
-    return Math.max(...data.incomeLast7Days.map((d) => d.total), 1);
   }
 }

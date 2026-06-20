@@ -1,24 +1,29 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '../../services/auth.service';
 import { AuthStore } from '../../services/auth.store';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule],
   template: `
     <div class="login-container">
       <div class="login-card">
-        <h1>Gym Management</h1>
+        <mat-icon class="login-icon">fitness_center</mat-icon>
+        <h1>GymAdmin</h1>
         <p class="subtitle">Inicia sesión para continuar</p>
 
         <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
-          <div class="form-group">
-            <label for="email">Email</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Email</mat-label>
             <input
-              id="email"
+              matInput
               type="email"
               [(ngModel)]="email"
               name="email"
@@ -26,22 +31,26 @@ import { AuthStore } from '../../services/auth.store';
               placeholder="admin@admin.com"
               autocomplete="email"
             />
-          </div>
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
 
-          <div class="form-group">
-            <label for="password">Contraseña</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Contraseña</mat-label>
             <input
-              id="password"
-              type="password"
+              matInput
+              [type]="hidePassword ? 'password' : 'text'"
               [(ngModel)]="password"
               name="password"
               required
               placeholder="••••••••"
               autocomplete="current-password"
             />
-          </div>
+            <button matSuffix mat-icon-button type="button" (click)="hidePassword = !hidePassword">
+              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+          </mat-form-field>
 
-          <button type="submit" [disabled]="loading" class="btn-primary">
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading" class="w-full !py-3 !text-base">
             {{ loading ? 'Ingresando...' : 'Ingresar' }}
           </button>
 
@@ -67,6 +76,15 @@ import { AuthStore } from '../../services/auth.store';
       padding: 40px;
       width: 400px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+
+    .login-icon {
+      font-size: 48px !important;
+      width: 48px !important;
+      height: 48px !important;
+      color: #667eea;
+      margin-bottom: 8px;
     }
 
     h1 {
@@ -77,64 +95,16 @@ import { AuthStore } from '../../services/auth.store';
 
     .subtitle {
       color: #666;
-      margin: 0 0 32px;
+      margin: 0 0 24px;
       font-size: 14px;
     }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #333;
-    }
-
-    input {
-      width: 100%;
-      padding: 10px 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      box-sizing: border-box;
-      transition: border-color 0.2s;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    .btn-primary {
-      width: 100%;
-      padding: 12px;
-      background: #667eea;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn-primary:hover:not(:disabled) {
-      background: #5a6fd6;
-    }
-
-    .btn-primary:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    :host ::ng-deep .mat-mdc-form-field { margin-bottom: 16px; }
 
     .error-msg {
       color: #e74c3c;
       font-size: 13px;
       margin-top: 16px;
-      text-align: center;
     }
   `],
 })
@@ -145,6 +115,7 @@ export class LoginComponent {
 
   email = 'admin@admin.com';
   password = 'Admin123';
+  hidePassword = true;
   loading = false;
   error = '';
 

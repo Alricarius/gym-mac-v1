@@ -1,7 +1,7 @@
 # Handoff — Gym Management System
 
-> Última actualización: 20/06/2026 — Iteración 9.B completa (createdBy en todas las entidades)
-> Último commit: `473680b`
+> Última actualización: 20/06/2026 — Iteración 10 completa (Configuración + Admin + Polish)
+> Último commit: `8541ec4`
 
 ## Stack
 
@@ -246,27 +246,53 @@ cd desktop && pnpm start
 - **Build backend**: ✅ `npx tsc --noEmit` limpio
 - **Migration ejecutada**: ✅ en BD contra 13 tablas
 
+### Iteración 10 — Configuración + Admin + Polish
+
+**Panel de usuarios (Frontend)**:
+- Página `/users` con tabla de usuarios del sistema (solo admin)
+- Formulario crear/editar con nombre, email, password, rol (admin/receptionist/trainer)
+- Sidebar: link "Usuarios" con icono `manage_accounts`, visible solo para admin
+
+**Módulo Settings (Backend + Frontend)**:
+- Backend: entidad `gym_config`, módulo NestJS `SettingsModule`, endpoints `GET /settings` y `PUT /settings` (admin-only)
+- Frontend: página `/settings` con formulario de configuración del gimnasio
+- Campos: nombre, dirección, teléfono, horarios por día (JSON), política de cancelación, días de gracia, tasa de impuesto, zona horaria
+- Sidebar: link "Configuración" con icono `settings`, visible solo para admin
+- **Migración 1718000000010**: tabla `gym_config` con seed inicial
+
+**Polish — Migración a Material UI**:
+- LoginComponent: migrado a `mat-form-field` + `matInput` + toggle visibilidad password
+- MemberForm, PlanForm, BranchForm, ClassForm, PaymentForm, SubscriptionForm, InventoryForm, InventoryLoanForm: migrados a Material
+
+**Polish — Diálogos**:
+- `ConfirmDialogComponent` reutilizable creado en `shared/components/`
+- 7× `confirm()` reemplazados por `MatDialog` en member-list, plan-list, subscription-list (3), class-list, booking-list, user-list
+- 1× `alert()` reemplazado por `MatSnackBar` en booking-form
+
+**Polish — Charts**:
+- Instalado `chart.js` ^4.5.1 + `ng2-charts` ^10.0.0
+- Gráfico de ingresos del dashboard migrado de CSS bars a Chart.js canvas
+- `provideCharts(withDefaultRegisterables())` en app.config
+
+**Polish — Configuración**:
+- Budget de bundle ajustado: warning 1.5MB, error 2MB
+
+**Electron Builder**:
+- Config `electron-builder.yml` para macOS (dmg), Windows (nsis), Linux (AppImage)
+- `main` field en package.json apunta a `dist-electron/main.js`
+
 ## Temas pendientes
 
-1. **Budget del bundle**: Angular Material ~782 kB. Ajustar `maximumBudget` en `angular.json` o lazy loading. (Iteración 10)
-2. **confirm() nativos**: Varios componentes aún usan `confirm()` de JavaScript. Migrar a `mat-dialog`. (Iteración 10)
-3. **Formularios sin Material**: MemberForm, PlanForm, SubscriptionForm, PaymentForm aún usan CSS custom. (Iteración 10)
-4. **Charts**: Gráfico de ingresos es CSS puro. Si se necesita más, instalar chart.js. (Iteración 10)
-5. **Canales mock**: Email y WhatsApp están en modo mock. Instalar `nodemailer` + `twilio` y configurar credenciales en `.env` para activarlos.
+1. **Canales mock**: Email y WhatsApp están en modo mock. Instalar `nodemailer` + `twilio` y configurar credenciales en `.env` para activarlos.
 
-## Siguiente paso (Iteración 10)
+## Siguiente paso
 
-La próxima iteración según `docs/MVP_ROADMAP.md` es:
+MVP completo. Próximos pasos sugeridos:
 
-### Configuración + Admin + Polish
-- Budget del bundle: ajustar `maximumBudget` en `angular.json`
-- Migrar `confirm()` nativos a `mat-dialog`
-- Migrar formularios a Angular Material
-- Charts con chart.js si es necesario
-- Panel de administración de usuarios
-- Configuración general del gimnasio
-- Roles y permisos
-- Electron builder + auto-update
+- **Canales reales**: Configurar SMTP (nodemailer) y Twilio para notificaciones reales de email y WhatsApp.
+- **Deploy**: Preparar Docker Compose para producción (backend + frontend build + nginx).
+- **Mobile app**: API ya está lista para consumir desde app móvil.
+- **Pruebas**: Agregar tests unitarios y e2e (backend Jest, frontend Jasmine/Karma).
 
 ### Tip: el seed ya genera datos completos + createdById
 Si necesitás resetear la BD, solo hace falta:

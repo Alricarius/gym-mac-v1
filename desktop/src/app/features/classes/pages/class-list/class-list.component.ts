@@ -7,6 +7,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { ClassService, GymClass } from '../../services/class.service';
 
 const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
@@ -112,6 +114,7 @@ const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 })
 export class ClassListComponent implements OnInit {
   readonly DAY_NAMES = DAY_NAMES;
+  private readonly dialog = inject(MatDialog);
   private readonly classService = inject(ClassService);
   private readonly router = inject(Router);
 
@@ -142,7 +145,11 @@ export class ClassListComponent implements OnInit {
   create(): void { this.router.navigate(['/classes/new']); }
   edit(c: GymClass): void { this.router.navigate(['/classes', c.id]); }
   delete(c: GymClass): void {
-    if (!confirm(`¿Eliminar la clase "${c.name}"?`)) return;
-    this.classService.remove(c.id).subscribe(() => this.loadClasses());
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      data: { title: 'Eliminar clase', message: `¿Eliminar la clase "${c.name}"?` },
+    });
+    dialogRef.afterClosed().subscribe((confirmed) => {
+      if (confirmed) this.classService.remove(c.id).subscribe(() => this.loadClasses());
+    });
   }
 }
