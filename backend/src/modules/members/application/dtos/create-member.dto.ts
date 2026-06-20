@@ -1,6 +1,6 @@
 import {
   IsString, MinLength, IsOptional, IsEmail,
-  IsEnum, IsDateString,
+  IsEnum, IsDateString, IsUUID,
 } from 'class-validator';
 import { MemberGender } from '../../domain/entities/member.entity';
 
@@ -36,4 +36,8 @@ export class CreateMemberDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @IsOptional()
+  @IsUUID()
+  branchId?: string;
 }

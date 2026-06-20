@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { Payment } from '../../domain/entities/payment.entity';
 import { CreatePaymentDto } from '../dtos/create-payment.dto';
 import { QueryPaymentDto } from '../dtos/query-payment.dto';
+import { Branch } from '../../../branches/domain/entities/branch.entity';
 import { SubscriptionsService } from '../../../subscriptions/application/services/subscriptions.service';
 
 @Injectable()
@@ -13,8 +14,16 @@ export class PaymentsService {
   constructor(
     @InjectRepository(Payment)
     private readonly repo: Repository<Payment>,
+    @InjectRepository(Branch)
+    private readonly branchRepo: Repository<Branch>,
     private readonly subscriptionsService: SubscriptionsService,
   ) {}
+
+  private async resolveBranchId(branchId?: string): Promise<string> {
+    if (branchId) return branchId;
+    const first = await this.branchRepo.find({ take: 1, order: { name: 'ASC' } });
+    return first[0]?.id;
+  }
 
   async create(dto: CreatePaymentDto): Promise<Payment> {
     const subscription = await this.subscriptionsService.findById(dto.subscriptionId);
@@ -33,6 +42,7 @@ export class PaymentsService {
       reference: dto.reference,
       notes: dto.notes,
       paidAt: dto.paidAt ? new Date(dto.paidAt) : new Date(),
+      branchId: await this.resolveBranchId(dto.branchId),
     });
 
     const saved = await this.repo.save(payment);

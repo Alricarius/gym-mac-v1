@@ -25,6 +25,7 @@ export interface CreateSubscriptionDto {
   paymentAmount?: number;
   paymentReference?: string;
   paymentNotes?: string;
+  paymentBranchId?: string;
 }
 
 export interface PaginatedResponse<T> {

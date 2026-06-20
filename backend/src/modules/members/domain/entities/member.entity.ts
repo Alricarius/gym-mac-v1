@@ -1,7 +1,9 @@
 import {
   Entity, PrimaryGeneratedColumn, Column,
   CreateDateColumn, UpdateDateColumn, DeleteDateColumn,
+  ManyToOne, JoinColumn,
 } from 'typeorm';
+import { Branch } from '../../../branches/domain/entities/branch.entity';
 
 export enum MemberGender {
   MALE = 'male',
@@ -45,6 +47,13 @@ export class Member {
 
   @Column({ type: 'enum', enum: MemberStatus, default: MemberStatus.ACTIVE })
   status: MemberStatus;
+
+  @Column({ nullable: true })
+  branchId?: string;
+
+  @ManyToOne(() => Branch)
+  @JoinColumn({ name: 'branchId' })
+  branch?: Branch;
 
   @CreateDateColumn()
   createdAt: Date;

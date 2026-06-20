@@ -13,6 +13,8 @@ export interface Member {
   photoUrl?: string;
   notes?: string;
   status: string;
+  branchId?: string;
+  branch?: { id: string; name: string };
   createdAt: string;
   updatedAt: string;
 }
@@ -26,9 +28,14 @@ export interface CreateMemberDto {
   address?: string;
   photoUrl?: string;
   notes?: string;
+  branchId?: string;
 }
 
 export interface UpdateMemberDto extends Partial<CreateMemberDto> {}
+
+export interface UpdateBranchDto {
+  branchId: string;
+}
 
 export interface PaginatedResponse<T> {
   data: T[];
@@ -66,5 +73,9 @@ export class MemberService {
 
   remove(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  updateBranch(id: string, branchId: string): Observable<Member> {
+    return this.http.patch<Member>(`${this.apiUrl}/${id}/branch`, { branchId });
   }
 }

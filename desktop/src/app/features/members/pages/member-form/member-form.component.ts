@@ -1,7 +1,8 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MemberService, Member, CreateMemberDto } from '../../services/member.service';
+import { BranchStore, Branch } from '../../../../core/services/branch-store.service';
 
 @Component({
   selector: 'app-member-form',
@@ -55,6 +56,16 @@ import { MemberService, Member, CreateMemberDto } from '../../services/member.se
           </div>
 
           <div class="form-group">
+            <label for="branchId">Sucursal</label>
+            <select id="branchId" [(ngModel)]="dto.branchId" name="branchId">
+              <option value="">Sin asignar</option>
+              @for (branch of branches(); track branch.id) {
+                <option [value]="branch.id">{{ branch.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
             <label for="notes">Notas</label>
             <textarea id="notes" [(ngModel)]="dto.notes" name="notes" rows="3" placeholder="Notas adicionales..."></textarea>
           </div>
@@ -96,8 +107,11 @@ import { MemberService, Member, CreateMemberDto } from '../../services/member.se
 })
 export class MemberFormComponent implements OnInit {
   private readonly memberService = inject(MemberService);
+  private readonly branchStore = inject(BranchStore);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+
+  readonly branches = signal<Branch[]>([]);
 
   isEdit = false;
   memberId = '';
@@ -109,11 +123,17 @@ export class MemberFormComponent implements OnInit {
     gender: '',
     address: '',
     notes: '',
+    branchId: '',
   };
   submitting = false;
   error = '';
 
   ngOnInit(): void {
+    this.branches.set(this.branchStore.branches());
+    if (this.branches().length === 0) {
+      this.branchStore.loadBranches();
+    }
+
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.isEdit = true;
@@ -128,10 +148,14 @@ export class MemberFormComponent implements OnInit {
             gender: member.gender || '',
             address: member.address || '',
             notes: member.notes || '',
+            branchId: member.branchId || '',
           };
         },
         error: () => this.router.navigate(['/members']),
       });
+    } else {
+      const selected = this.branchStore.selectedBranch();
+      if (selected) this.dto.branchId = selected.id;
     }
   }
 

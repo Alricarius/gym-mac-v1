@@ -3,6 +3,7 @@ import { MembersService } from '../../application/services/members.service';
 import { CreateMemberDto } from '../../application/dtos/create-member.dto';
 import { UpdateMemberDto } from '../../application/dtos/update-member.dto';
 import { QueryMemberDto } from '../../application/dtos/query-member.dto';
+import { UpdateBranchDto } from '../../application/dtos/update-branch.dto';
 import { JwtAuthGuard } from '../../../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../../common/guards/roles.guard';
 import { Roles } from '../../../../common/decorators/roles.decorator';
@@ -31,6 +32,11 @@ export class MembersController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateMemberDto) {
     return this.membersService.update(id, dto);
+  }
+
+  @Patch(':id/branch')
+  updateBranch(@Param('id') id: string, @Body() dto: UpdateBranchDto) {
+    return this.membersService.updateBranch(id, dto.branchId);
   }
 
   @Delete(':id')

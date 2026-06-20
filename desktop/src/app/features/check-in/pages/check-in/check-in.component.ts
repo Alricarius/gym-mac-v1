@@ -11,6 +11,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { CheckInService, ActiveMember, VerifyResponse } from '../../services/check-in.service';
 import { MemberService, Member } from '../../../members/services/member.service';
 import { SocketService } from '../../../../core/services/socket.service';
+import { BranchStore } from '../../../../core/services/branch-store.service';
 
 @Component({
   selector: 'app-check-in',
@@ -81,6 +82,20 @@ import { SocketService } from '../../../../core/services/socket.service';
               @if (verifyError()) {
                 <div class="alert alert-error">{{ verifyError() }}</div>
               }
+
+              @if (wrongBranchMember(); as wm) {
+                <div class="alert alert-warning !mt-4">
+                  <p class="font-medium">{{ wm.fullName }}</p>
+                  <p class="text-sm mt-1">Pertenece a <strong>{{ wm.branchName }}</strong>.</p>
+                  <p class="text-sm">¿Deseas cambiar su sucursal a <strong>{{ branchStore.selectedBranch()?.name }}</strong> y registrar entrada?</p>
+                  <div class="flex gap-2 mt-3">
+                    <button mat-flat-button color="primary" (click)="changeBranchAndEnter()">
+                      Sí, cambiar y entrar
+                    </button>
+                    <button mat-stroked-button (click)="wrongBranchMember.set(null)">Cancelar</button>
+                  </div>
+                </div>
+              }
             </mat-card-content>
           </mat-card>
         </div>
@@ -137,6 +152,7 @@ export class CheckInComponent implements OnInit, OnDestroy {
   private readonly checkInService = inject(CheckInService);
   private readonly memberService = inject(MemberService);
   readonly socketService = inject(SocketService);
+  readonly branchStore = inject(BranchStore);
   private wsSubscription: Subscription | null = null;
 
   readonly searchResults = signal<Member[]>([]);
@@ -146,6 +162,8 @@ export class CheckInComponent implements OnInit, OnDestroy {
   readonly verifiedMember = signal<VerifyResponse | null>(null);
   readonly verifyError = signal<string | null>(null);
   readonly lastResponse = signal<VerifyResponse | null>(null);
+  readonly wrongBranchMember = signal<VerifyResponse['member'] | null>(null);
+  readonly pendingMember = signal<Member | null>(null);
   searchTerm = '';
 
   ngOnInit(): void {
@@ -181,19 +199,42 @@ export class CheckInComponent implements OnInit, OnDestroy {
     this.verifyError.set(null);
     this.verifiedMember.set(null);
     this.lastResponse.set(null);
+    this.wrongBranchMember.set(null);
+    this.pendingMember.set(null);
 
-    this.checkInService.verify(member.id).subscribe({
+    const branchId = this.branchStore.selectedBranch()?.id;
+
+    this.checkInService.verify(member.id, branchId).subscribe({
       next: (res) => {
         this.verifiedMember.set(res);
         this.lastResponse.set(res);
         this.loadingVerify.set(null);
         if (res.canEnter) {
-          this.checkInService.checkIn({ memberId: member.id, type: 'entry' }).subscribe();
+          this.checkInService.checkIn({ memberId: member.id, type: 'entry', branchId }).subscribe();
+        } else if (res.reason === 'wrong_branch' && res.member) {
+          this.wrongBranchMember.set(res.member);
+          this.pendingMember.set(member);
         }
       },
       error: (err) => {
         this.verifyError.set(err.error?.message || 'Error al verificar');
         this.loadingVerify.set(null);
+      },
+    });
+  }
+
+  changeBranchAndEnter(): void {
+    const member = this.pendingMember();
+    if (!member) return;
+    const branchId = this.branchStore.selectedBranch()?.id;
+    if (!branchId) return;
+
+    this.memberService.updateBranch(member.id, branchId).subscribe({
+      next: () => {
+        this.wrongBranchMember.set(null);
+        this.pendingMember.set(null);
+        this.lastResponse.set(null);
+        this.doEntry(member);
       },
     });
   }

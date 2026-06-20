@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SubscriptionService, CreateSubscriptionDto } from '../../services/subscription.service';
 import { MemberService, Member } from '../../../members/services/member.service';
 import { PlanService, Plan } from '../../../plans/services/plan.service';
+import { BranchStore } from '../../../../core/services/branch-store.service';
 
 @Component({
   selector: 'app-subscription-form',
@@ -116,6 +117,7 @@ export class SubscriptionFormComponent implements OnInit {
   private readonly subscriptionService = inject(SubscriptionService);
   private readonly memberService = inject(MemberService);
   private readonly planService = inject(PlanService);
+  private readonly branchStore = inject(BranchStore);
   private readonly router = inject(Router);
 
   readonly members = signal<Member[]>([]);
@@ -165,7 +167,7 @@ export class SubscriptionFormComponent implements OnInit {
     this.submitting = true;
     this.error = '';
 
-    const cleaned: any = { ...this.dto };
+    const cleaned: any = { ...this.dto, paymentBranchId: this.branchStore.selectedBranch()?.id };
     if (!cleaned.startDate) delete cleaned.startDate;
     if (!cleaned.paymentReference) delete cleaned.paymentReference;
     if (!cleaned.paymentNotes) delete cleaned.paymentNotes;

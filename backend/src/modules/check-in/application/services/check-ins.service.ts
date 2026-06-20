@@ -2,11 +2,12 @@ import {
   Injectable, NotFoundException, BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThan } from 'typeorm';
+import { Repository, MoreThan, IsNull } from 'typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CheckIn, CheckInType } from '../../domain/entities/check-in.entity';
 import { CreateCheckInDto } from '../dtos/create-check-in.dto';
 import { Member } from '../../../members/domain/entities/member.entity';
+import { Branch } from '../../../branches/domain/entities/branch.entity';
 import { Subscription, SubscriptionStatus } from '../../../subscriptions/domain/entities/subscription.entity';
 import { CheckInGateway } from '../../interfaces/gateways/check-in.gateway';
 
@@ -17,15 +18,39 @@ export class CheckInsService {
     private readonly checkInRepo: Repository<CheckIn>,
     @InjectRepository(Member)
     private readonly memberRepo: Repository<Member>,
+    @InjectRepository(Branch)
+    private readonly branchRepo: Repository<Branch>,
     @InjectRepository(Subscription)
     private readonly subscriptionRepo: Repository<Subscription>,
     private readonly gateway: CheckInGateway,
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async verify(memberId: string) {
-    const member = await this.memberRepo.findOne({ where: { id: memberId } });
+  async verify(memberId: string, branchId?: string) {
+    const member = await this.memberRepo.findOne({
+      where: { id: memberId },
+      relations: ['branch'],
+    });
     if (!member) throw new NotFoundException('Member not found');
+
+    if (branchId && member.branchId && member.branchId !== branchId) {
+      const branch = await this.branchRepo.findOne({ where: { id: member.branchId } });
+      return {
+        canEnter: false,
+        reason: 'wrong_branch',
+        member: {
+          id: member.id,
+          fullName: member.fullName,
+          branchId: member.branchId,
+          branchName: branch?.name || 'Unknown',
+        },
+      };
+    }
+
+    if (branchId && !member.branchId) {
+      member.branchId = branchId;
+      await this.memberRepo.save(member);
+    }
 
     const subscription = await this.subscriptionRepo.findOne({
       where: {
@@ -44,10 +69,15 @@ export class CheckInsService {
   }
 
   async checkIn(dto: CreateCheckInDto) {
-    const verification = await this.verify(dto.memberId);
+    const branchId = dto.branchId;
+    const verification = await this.verify(dto.memberId, branchId);
     if (!verification.canEnter) throw new BadRequestException(verification.reason);
 
-    const checkIn = this.checkInRepo.create({ memberId: dto.memberId, type: CheckInType.ENTRY });
+    const checkIn = this.checkInRepo.create({
+      memberId: dto.memberId,
+      type: CheckInType.ENTRY,
+      branchId: branchId || (verification as any).member.branchId,
+    });
     const saved = await this.checkInRepo.save(checkIn);
     const result = await this.checkInRepo.findOne({
       where: { id: saved.id },
@@ -79,7 +109,11 @@ export class CheckInsService {
     const member = await this.memberRepo.findOne({ where: { id: dto.memberId } });
     if (!member) throw new NotFoundException('Member not found');
 
-    const checkIn = this.checkInRepo.create({ memberId: dto.memberId, type: CheckInType.EXIT });
+    const checkIn = this.checkInRepo.create({
+      memberId: dto.memberId,
+      type: CheckInType.EXIT,
+      branchId: dto.branchId || member.branchId,
+    });
     const saved = await this.checkInRepo.save(checkIn);
     const result = await this.checkInRepo.findOne({
       where: { id: saved.id },
@@ -90,8 +124,8 @@ export class CheckInsService {
     return result;
   }
 
-  async findActive() {
-    const raw = await this.checkInRepo.query(`
+  async findActive(branchId?: string) {
+    let whereClause = `
       SELECT ci.id, ci."memberId", ci.type, ci."createdAt",
              m."fullName", m."photoUrl"
       FROM check_ins ci
@@ -103,8 +137,21 @@ export class CheckInsService {
         AND ci2.type = 'exit'
         AND ci2."createdAt" > ci."createdAt"
       )
-      ORDER BY ci."createdAt" DESC
-    `);
-    return raw;
+    `;
+    if (branchId) {
+      whereClause += ` AND ci."branchId" = $1`;
+    }
+    whereClause += ` ORDER BY ci."createdAt" DESC`;
+    const params = branchId ? [branchId] : [];
+    return this.checkInRepo.query(whereClause, params);
+  }
+
+  async updateMemberBranch(memberId: string, branchId: string) {
+    const member = await this.memberRepo.findOne({ where: { id: memberId } });
+    if (!member) throw new NotFoundException('Member not found');
+    const branch = await this.branchRepo.findOne({ where: { id: branchId } });
+    if (!branch) throw new NotFoundException('Branch not found');
+    member.branchId = branchId;
+    return this.memberRepo.save(member);
   }
 }

@@ -5,7 +5,13 @@ import { Observable } from 'rxjs';
 export interface VerifyResponse {
   canEnter: boolean;
   reason?: string;
-  member?: { id: string; fullName: string; photoUrl?: string };
+  member?: {
+    id: string;
+    fullName: string;
+    photoUrl?: string;
+    branchId?: string;
+    branchName?: string;
+  };
   subscription?: { id: string; endDate: string; status: string };
 }
 
@@ -29,6 +35,7 @@ export interface ActiveMember {
 export interface CreateCheckInDto {
   memberId: string;
   type: 'entry' | 'exit';
+  branchId?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -37,8 +44,10 @@ export class CheckInService {
 
   constructor(private readonly http: HttpClient) {}
 
-  verify(memberId: string): Observable<VerifyResponse> {
-    return this.http.get<VerifyResponse>(`${this.apiUrl}/verify/${memberId}`);
+  verify(memberId: string, branchId?: string): Observable<VerifyResponse> {
+    let url = `${this.apiUrl}/verify/${memberId}`;
+    if (branchId) url += `?branchId=${branchId}`;
+    return this.http.get<VerifyResponse>(url);
   }
 
   checkIn(dto: CreateCheckInDto): Observable<CheckInResponse> {

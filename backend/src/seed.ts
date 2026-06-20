@@ -94,6 +94,32 @@ async function seed() {
     }
   }
 
+  const branchData = [
+    { name: 'Sucursal Norte', address: 'Av. Principal 123', phone: '555-1000' },
+    { name: 'Sucursal Sur', address: 'Calle Secundaria 456', phone: '555-2000' },
+  ];
+  const branches: any[] = [];
+  for (const data of branchData) {
+    try {
+      const branch = await branchesService.create(data);
+      branches.push(branch);
+      console.log('✓ Branch created:', branch.name);
+    } catch (err: any) {
+      const existing = await branchesService.findAll();
+      const found = existing.find((b: any) => b.name === data.name);
+      if (found) branches.push(found);
+      console.log('~ Branch already exists, skipping:', data.name);
+    }
+  }
+  const [norte, sur] = branches;
+
+  for (const member of members) {
+    const branch = member.fullName === 'Pedro Sánchez' ? undefined : [norte, sur][Math.floor(Math.random() * 2)];
+    if (branch) {
+      await membersService.updateBranch(member.id, branch.id);
+    }
+  }
+
   const [carlos, maria, juan, ana] = members;
   const [mensual, trimestral, anual] = plans;
 
@@ -109,11 +135,13 @@ async function seed() {
     startDate.setDate(startDate.getDate() + cfg.startOffset);
 
     try {
+      const memberBranch = cfg.member.branchId;
       await subscriptionsService.create({
         memberId: cfg.member.id,
         planId: cfg.plan.id,
         startDate: startDate.toISOString().split('T')[0],
         paymentMethod: cfg.method,
+        paymentBranchId: memberBranch || norte.id,
       });
       console.log('✓ Subscription + Payment created for', cfg.member.fullName);
     } catch (err: any) {
@@ -136,10 +164,12 @@ async function seed() {
 
     for (const member of checkInMembers) {
       if (Math.random() > 0.3) {
+        const branchId = member.branchId || norte.id;
         const entry = new Date(date);
         entry.setHours(8 + Math.floor(Math.random() * 4), Math.floor(Math.random() * 60));
         await checkInRepo.insert({
           memberId: member.id,
+          branchId,
           type: CheckInType.ENTRY,
           createdAt: entry,
         });
@@ -150,6 +180,7 @@ async function seed() {
           exit.setHours(exit.getHours() + 1 + Math.floor(Math.random() * 2));
           await checkInRepo.insert({
             memberId: member.id,
+            branchId,
             type: CheckInType.EXIT,
             createdAt: exit,
           });
@@ -245,27 +276,6 @@ async function seed() {
       }
     }
   }
-
-  const branchData = [
-    { name: 'Sucursal Norte', address: 'Av. Principal 123', phone: '555-1000' },
-    { name: 'Sucursal Sur', address: 'Calle Secundaria 456', phone: '555-2000' },
-  ];
-
-  const branches: any[] = [];
-  for (const data of branchData) {
-    try {
-      const branch = await branchesService.create(data);
-      branches.push(branch);
-      console.log('✓ Branch created:', branch.name);
-    } catch (err: any) {
-      const existing = await branchesService.findAll();
-      const found = existing.find((b: any) => b.name === data.name);
-      if (found) branches.push(found);
-      console.log('~ Branch already exists, skipping:', data.name);
-    }
-  }
-
-  const [norte, sur] = branches;
 
   const inventoryByBranch: any[] = [
     { branch: norte, items: [

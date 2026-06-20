@@ -5,6 +5,7 @@ import {
 } from 'typeorm';
 import { Subscription } from '../../../subscriptions/domain/entities/subscription.entity';
 import { Member } from '../../../members/domain/entities/member.entity';
+import { Branch } from '../../../branches/domain/entities/branch.entity';
 
 export enum PaymentMethod {
   CASH = 'cash',
@@ -30,6 +31,13 @@ export class Payment {
   @ManyToOne(() => Member)
   @JoinColumn({ name: 'memberId' })
   member: Member;
+
+  @Column()
+  branchId: string;
+
+  @ManyToOne(() => Branch)
+  @JoinColumn({ name: 'branchId' })
+  branch: Branch;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   amount: number;

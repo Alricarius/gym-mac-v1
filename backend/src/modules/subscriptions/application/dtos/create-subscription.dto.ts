@@ -29,4 +29,8 @@ export class CreateSubscriptionDto {
   @IsOptional()
   @IsString()
   paymentNotes?: string;
+
+  @IsOptional()
+  @IsUUID()
+  paymentBranchId?: string;
 }

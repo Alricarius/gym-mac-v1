@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PaymentService, CreatePaymentDto } from '../../services/payment.service';
 import { SubscriptionService, Subscription } from '../../../subscriptions/services/subscription.service';
+import { BranchStore } from '../../../../core/services/branch-store.service';
 
 @Component({
   selector: 'app-payment-form',
@@ -98,6 +99,7 @@ import { SubscriptionService, Subscription } from '../../../subscriptions/servic
 export class PaymentFormComponent implements OnInit {
   private readonly paymentService = inject(PaymentService);
   private readonly subscriptionService = inject(SubscriptionService);
+  private readonly branchStore = inject(BranchStore);
   private readonly router = inject(Router);
 
   readonly subscriptions = signal<Subscription[]>([]);
@@ -148,7 +150,7 @@ export class PaymentFormComponent implements OnInit {
     this.submitting = true;
     this.error = '';
 
-    const cleaned: any = { ...this.dto };
+    const cleaned: any = { ...this.dto, branchId: this.branchStore.selectedBranch()?.id };
     if (this.paidAtStr) {
       cleaned.paidAt = new Date(this.paidAtStr).toISOString();
     } else {

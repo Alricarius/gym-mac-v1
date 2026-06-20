@@ -31,6 +31,7 @@ export interface CreatePaymentDto {
   reference?: string;
   notes?: string;
   paidAt?: string;
+  branchId?: string;
 }
 
 export interface Receipt {

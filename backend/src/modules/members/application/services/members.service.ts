@@ -2,6 +2,7 @@ import { Injectable, ConflictException, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
 import { Member } from '../../domain/entities/member.entity';
+import { Branch } from '../../../branches/domain/entities/branch.entity';
 import { CreateMemberDto } from '../dtos/create-member.dto';
 import { UpdateMemberDto } from '../dtos/update-member.dto';
 import { QueryMemberDto } from '../dtos/query-member.dto';
@@ -11,7 +12,17 @@ export class MembersService {
   constructor(
     @InjectRepository(Member)
     private readonly repo: Repository<Member>,
+    @InjectRepository(Branch)
+    private readonly branchRepo: Repository<Branch>,
   ) {}
+
+  async updateBranch(id: string, branchId: string): Promise<Member> {
+    const member = await this.findById(id);
+    const branch = await this.branchRepo.findOne({ where: { id: branchId } });
+    if (!branch) throw new NotFoundException('Branch not found');
+    member.branchId = branchId;
+    return this.repo.save(member);
+  }
 
   async create(dto: CreateMemberDto): Promise<Member> {
     if (dto.email) {

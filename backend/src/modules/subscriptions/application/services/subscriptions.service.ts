@@ -59,6 +59,7 @@ export class SubscriptionsService {
       reference: dto.paymentReference,
       notes: dto.paymentNotes,
       paidAt: now,
+      branchId: dto.paymentBranchId,
     });
 
     await this.paymentRepo.save(payment);

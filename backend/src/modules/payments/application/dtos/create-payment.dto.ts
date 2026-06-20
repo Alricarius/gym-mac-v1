@@ -28,4 +28,8 @@ export class CreatePaymentDto {
   @IsOptional()
   @IsDateString()
   paidAt?: string;
+
+  @IsOptional()
+  @IsUUID()
+  branchId?: string;
 }
