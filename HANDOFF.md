@@ -1,7 +1,7 @@
 # Handoff — Gym Management System
 
-> Última actualización: 20/06/2026 — Iteración 7 completa (Clases + Reservas + Reportes mejorados)
-> Último commit: `8fbcbd6`
+> Última actualización: 20/06/2026 — Iteración 8 completa (Notificaciones + Recordatorios)
+> Último commit: `813b76b`
 
 ## Stack
 
@@ -112,13 +112,15 @@ cd desktop && pnpm start
 | `backend/src/modules/reports/` | Dashboard + Reportes (ingresos, miembros) |
 | `backend/src/modules/classes/` | Clases CRUD + horarios (Schedule) |
 | `backend/src/modules/bookings/` | Reservas con control de cupo + waitlist |
+| `backend/src/modules/notifications/` | Notificaciones multicanal (in-app/email/whatsapp) con mocks |
+| `backend/src/modules/tasks/` | Tareas cron (suscripción por vencer, recordatorio booking) |
 | `backend/src/database/migrations/` | Migraciones SQL |
 
 ### Frontend
 | Archivo | Propósito |
 |---|---|
-| `desktop/src/app/app.routes.ts` | Rutas con lazy loading (incluye /plans, /subscriptions, /payments, /classes, /bookings) |
-| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet (links: Dashboard, Miembros, Planes, Suscripciones, Pagos, Clases, Reservas, Reportes) |
+| `desktop/src/app/app.routes.ts` | Rutas con lazy loading (incluye /plans, /subscriptions, /payments, /classes, /bookings, /notifications) |
+| `desktop/src/app/layouts/main/main-layout.component.ts` | Sidebar + router-outlet (links: Dashboard, Miembros, Planes, Suscripciones, Pagos, Clases, Reservas, Reportes, Notificaciones) |
 | `desktop/src/app/features/auth/` | Login, auth service, token service, auth store (signals) |
 | `desktop/src/app/features/dashboard/` | Dashboard placeholder |
 | `desktop/src/app/features/members/` | Lista + formulario miembros |
@@ -130,7 +132,8 @@ cd desktop && pnpm start
 | `desktop/src/app/features/reports/` | Reporte ingresos con filtro fechas + export CSV + auto-load + spinner |
 | `desktop/src/app/features/classes/` | Lista + formulario clases con horarios inline |
 | `desktop/src/app/features/bookings/` | Calendario mensual, lista con acciones, formulario crear reserva |
-| `desktop/src/app/core/services/socket.service.ts` | Cliente Socket.IO |
+| `desktop/src/app/features/notifications/` | Centro de notificaciones + toast en tiempo real vía WebSocket |
+| `desktop/src/app/core/services/socket.service.ts` | Cliente Socket.IO (check-in + eventos notification:new) |
 | `desktop/src/app/core/interceptors/auth.interceptor.ts` | JWT interceptor con refresh |
 | `desktop/src/app/core/guards/auth.guard.ts` | authGuard, loginGuard |
 | `desktop/electron/main.ts` | Main process con retry para ng serve |
@@ -188,6 +191,23 @@ cd desktop && pnpm start
 - Fix NG8107: `s.startTime?.slice`, `s.endTime?.slice` → sin optional chaining (class-form + booking-form)
 - Seed: 3 clases (Spinning Lu/Mi/Vi 18-19, Yoga Ma/Ju 07-08, Funcional Lu/Mi/Vi 07-08) + 4 reservas demo (Carlos: 3 spinning, Juan: 1 spinning)
 
+### Iteración 8 — Notificaciones + Recordatorios
+- **Paquetes instalados**: `@nestjs/schedule` (cron), `@nestjs/event-emitter` (eventos desacoplados)
+- **Arquitectura**: Strategy Pattern para canales (interface `NotificationChannelInterface`), EventEmitter2 para eventos entre módulos
+- **Canales implementados**:
+  - `InAppChannelService` — real: WebSocket vía `NotificationsGateway`, evento `notification:new`
+  - `EmailChannelService` — mock: `console.log('[EMAIL MOCK] ...')` (reemplazar con nodemailer cuando haya SMTP)
+  - `WhatsAppChannelService` — mock: `console.log('[WHATSAPP MOCK] ...')` (reemplazar con Twilio cuando haya credenciales)
+- **Notificaciones automáticas**:
+  - **Check-in**: `CheckInsService` emite `member.checked-in` → si ≤7 días de suscripción restantes → alerta in-app + email + whatsapp
+  - **Suscripción por vencer**: `SubscriptionExpirationTask` (cron 8am diario) → busca suscripciones que vencen en 3 días → notifica
+  - **Recordatorio de clase**: `BookingReminderTask` (cron cada 30min) → busca bookings próximos → notifica
+- **API**: `GET /notifications`, `GET /unread-count`, `PATCH /:id/read`, `PATCH /read-all/:memberId`
+- **Frontend**: `/notifications` — centro de notificaciones con historial paginado, marcar como leída
+- **Frontend**: `NotificationToastService` — MatSnackBar al recibir evento `notification:new` vía WebSocket
+- **Sidebar**: Nuevo ítem "Notificaciones" con icono `notifications`
+- **Migración 1718000000006**: tabla `notifications` con índices + FK → members
+
 ### Iteración 7.1 — Reportes mejorados
 - **Auto-load**: `ngOnInit` con fechas default (1ro del mes → hoy) + carga automática al entrar
 - **Loading indicator**: `mat-spinner` + texto "Cargando..." durante el request
@@ -212,19 +232,19 @@ cd desktop && pnpm start
 
 ## Temas pendientes
 
-1. **Budget del bundle**: Angular Material aumentó el tamaño inicial a ~670 kB. Ajustar `maximumBudget` en `angular.json` o habilitar lazy loading de módulos Material. (Iteración 10)
+1. **Budget del bundle**: Angular Material ~782 kB. Ajustar `maximumBudget` en `angular.json` o lazy loading. (Iteración 10)
 2. **confirm() nativos**: Varios componentes aún usan `confirm()` de JavaScript. Migrar a `mat-dialog`. (Iteración 10)
-3. **Formularios sin Material**: MemberForm, PlanForm, SubscriptionForm con pago, PaymentForm aún usan CSS custom. (Iteración 10)
-4. **Charts**: El gráfico de ingresos es CSS puro (barras). Si se necesita más sofisticación, instalar chart.js. (Iteración 10)
+3. **Formularios sin Material**: MemberForm, PlanForm, SubscriptionForm, PaymentForm aún usan CSS custom. (Iteración 10)
+4. **Charts**: Gráfico de ingresos es CSS puro. Si se necesita más, instalar chart.js. (Iteración 10)
+5. **Canales mock**: Email y WhatsApp están en modo mock. Instalar `nodemailer` + `twilio` y configurar credenciales en `.env` para activarlos.
 
-## Siguiente paso (Iteración 8)
+## Siguiente paso (Iteración 9)
 
 La próxima iteración según `docs/MVP_ROADMAP.md` es:
 
-### Notificaciones + Recordatorios
-- Backend: módulo `notifications` con canales email/SMS/push
-- Jobs cron para: expiración de suscripciones, pago vencido, recordatorio de reserva
-- Frontend: preferencias de notificación por miembro, historial de notificaciones enviadas
+### Multisucursal + Inventario
+- Backend: módulos `branches` (CRUD sucursales) e `inventory` (equipos + préstamos)
+- Frontend: gestión de sucursales, inventario con préstamos a miembros, branch selector en header
 
 ### Tip: el seed ya genera datos completos
 Si necesitás resetear la BD, solo hace falta:
@@ -253,6 +273,18 @@ JWT_ACCESS_SECRET=...
 JWT_REFRESH_SECRET=...
 JWT_ACCESS_EXPIRY=15m
 JWT_REFRESH_EXPIRY=7d
+
+# SMTP (email notifications)
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=noreply@gym.com
+
+# Twilio (WhatsApp notifications)
+TWILIO_ACCOUNT_SID=
+TWILIO_AUTH_TOKEN=
+TWILIO_WHATSAPP_NUMBER=
 ```
 
 ## Comandos útiles

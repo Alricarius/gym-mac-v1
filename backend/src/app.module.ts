@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { dataSourceOptions } from './ormconfig';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -11,10 +13,14 @@ import { CheckInModule } from './modules/check-in/check-in.module';
 import { ReportsModule } from './modules/reports/reports.module';
 import { ClassesModule } from './modules/classes/classes.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { TasksModule } from './modules/tasks/tasks.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(dataSourceOptions),
+    ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
     AuthModule,
     UsersModule,
     MembersModule,
@@ -25,6 +31,8 @@ import { BookingsModule } from './modules/bookings/bookings.module';
     ReportsModule,
     ClassesModule,
     BookingsModule,
+    NotificationsModule,
+    TasksModule,
   ],
 })
 export class AppModule {}

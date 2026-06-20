@@ -162,6 +162,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/notifications/pages/notification-center/notification-center.component').then(
+            (m) => m.NotificationCenterComponent,
+          ),
+      },
+      {
         path: '',
         redirectTo: 'dashboard',
         pathMatch: 'full',

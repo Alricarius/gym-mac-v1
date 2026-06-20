@@ -3,6 +3,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CheckIn, CheckInType } from '../../domain/entities/check-in.entity';
 import { CreateCheckInDto } from '../dtos/create-check-in.dto';
 import { Member } from '../../../members/domain/entities/member.entity';
@@ -19,6 +20,7 @@ export class CheckInsService {
     @InjectRepository(Subscription)
     private readonly subscriptionRepo: Repository<Subscription>,
     private readonly gateway: CheckInGateway,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async verify(memberId: string) {
@@ -42,8 +44,8 @@ export class CheckInsService {
   }
 
   async checkIn(dto: CreateCheckInDto) {
-    const { canEnter, reason } = await this.verify(dto.memberId);
-    if (!canEnter) throw new BadRequestException(reason);
+    const verification = await this.verify(dto.memberId);
+    if (!verification.canEnter) throw new BadRequestException(verification.reason);
 
     const checkIn = this.checkInRepo.create({ memberId: dto.memberId, type: CheckInType.ENTRY });
     const saved = await this.checkInRepo.save(checkIn);
@@ -53,6 +55,23 @@ export class CheckInsService {
     });
 
     this.gateway.emitCheckInUpdate();
+
+    const { member, subscription } = verification as { canEnter: true; member: Member; subscription: Subscription };
+    if (member && subscription) {
+      const endDate = new Date(subscription.endDate);
+      const today = new Date();
+      const diffTime = endDate.getTime() - today.getTime();
+      const remainingDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+      this.eventEmitter.emit('member.checked-in', {
+        memberId: member.id,
+        memberEmail: member.email || '',
+        memberPhone: member.phone || null,
+        memberFullName: member.fullName,
+        remainingDays,
+      });
+    }
+
     return result;
   }
 

@@ -34,4 +34,15 @@ export class SocketService {
       return () => this.socket?.off('check-in:updated');
     });
   }
+
+  onNotification(): Observable<{ type: string; subject: string; body: string }> {
+    return new Observable((observer) => {
+      if (!this.socket) {
+        observer.error(new Error('Socket not connected'));
+        return;
+      }
+      this.socket.on('notification:new', (data) => observer.next(data));
+      return () => this.socket?.off('notification:new');
+    });
+  }
 }

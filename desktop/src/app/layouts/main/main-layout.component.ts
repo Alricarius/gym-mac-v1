@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { AuthService } from '../../features/auth/services/auth.service';
 import { AuthStore } from '../../features/auth/services/auth.store';
+import { NotificationToastService } from '../../features/notifications/services/notification-toast.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -67,6 +68,11 @@ import { AuthStore } from '../../features/auth/services/auth.store';
             <mat-icon class="mr-3 text-lg">bar_chart</mat-icon>
             <span>Reportes</span>
           </a>
+          <a mat-list-item routerLink="/notifications" routerLinkActive="active"
+             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+            <mat-icon class="mr-3 text-lg">notifications</mat-icon>
+            <span>Notificaciones</span>
+          </a>
         </mat-nav-list>
 
         <div class="p-4 border-t border-white/10">
@@ -91,6 +97,7 @@ export class MainLayoutComponent {
   readonly authStore = inject(AuthStore);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly notificationToast = inject(NotificationToastService);
 
   logout(): void {
     this.authService.logout();
