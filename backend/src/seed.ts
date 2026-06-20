@@ -13,6 +13,8 @@ import { CheckInType } from './modules/check-in/domain/entities/check-in.entity'
 import { ClassesService } from './modules/classes/application/services/classes.service';
 import { BookingsService } from './modules/bookings/application/services/bookings.service';
 import { DataSource } from 'typeorm';
+import { BranchesService } from './modules/branches/application/services/branches.service';
+import { InventoryItemsService } from './modules/inventory/application/services/inventory-items.service';
 
 async function seed() {
   const app = await NestFactory.createApplicationContext(AppModule);
@@ -20,6 +22,8 @@ async function seed() {
   const membersService = app.get(MembersService);
   const plansService = app.get(PlansService);
   const subscriptionsService = app.get(SubscriptionsService);
+  const branchesService = app.get(BranchesService);
+  const inventoryService = app.get(InventoryItemsService);
 
   const dataSource = app.get(DataSource);
   const checkInRepo = dataSource.getRepository(CheckIn);
@@ -238,6 +242,67 @@ async function seed() {
         console.log(`✓ Booking created for Juan → Spinning on ${futureDates[0]}`);
       } catch (err: any) {
         console.log(`~ Booking skipped: ${err.message}`);
+      }
+    }
+  }
+
+  const branchData = [
+    { name: 'Sucursal Norte', address: 'Av. Principal 123', phone: '555-1000' },
+    { name: 'Sucursal Sur', address: 'Calle Secundaria 456', phone: '555-2000' },
+  ];
+
+  const branches: any[] = [];
+  for (const data of branchData) {
+    try {
+      const branch = await branchesService.create(data);
+      branches.push(branch);
+      console.log('✓ Branch created:', branch.name);
+    } catch (err: any) {
+      const existing = await branchesService.findAll();
+      const found = existing.find((b: any) => b.name === data.name);
+      if (found) branches.push(found);
+      console.log('~ Branch already exists, skipping:', data.name);
+    }
+  }
+
+  const [norte, sur] = branches;
+
+  const inventoryByBranch: any[] = [
+    { branch: norte, items: [
+      { name: 'Pesa 10kg', description: 'Mancuerna de 10kg', totalQuantity: 5 },
+      { name: 'Colchoneta', description: 'Colchoneta de yoga', totalQuantity: 10 },
+      { name: 'Cuerda para saltar', description: 'Cuerda de velocidad ajustable', totalQuantity: 8 },
+      { name: 'Banda elástica', description: 'Banda de resistencia media', totalQuantity: 15 },
+      { name: 'Step', description: 'Plataforma para aeróbicos', totalQuantity: 4 },
+    ]},
+    { branch: sur, items: [
+      { name: 'Pesa 10kg', description: 'Mancuerna de 10kg', totalQuantity: 3 },
+      { name: 'Colchoneta', description: 'Colchoneta de yoga', totalQuantity: 6 },
+      { name: 'Step', description: 'Plataforma para aeróbicos', totalQuantity: 8 },
+      { name: 'Fitball', description: 'Pelota de estabilidad 65cm', totalQuantity: 5 },
+    ]},
+  ];
+
+  for (const { branch, items } of inventoryByBranch) {
+    for (const data of items) {
+      try {
+        await inventoryService.create({ branchId: branch.id, ...data });
+        console.log('✓ Inventory created:', data.name, '->', branch.name);
+      } catch (err: any) {
+        console.log('~ Inventory already exists, skipping:', data.name);
+      }
+    }
+  }
+
+  if (norte && carlos) {
+    const pesas = (await inventoryService.findAll({ branchId: norte.id, limit: 100 })).data
+      .find((i: any) => i.name === 'Pesa 10kg');
+    if (pesas) {
+      try {
+        await inventoryService.loan(pesas.id, { memberId: carlos.id, quantity: 1, notes: 'Préstamo demo' });
+        console.log('✓ Demo loan: Carlos López borrowed Pesa 10kg from Sucursal Norte');
+      } catch (err: any) {
+        console.log('~ Demo loan skipped:', err.message);
       }
     }
   }

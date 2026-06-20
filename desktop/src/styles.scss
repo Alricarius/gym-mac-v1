@@ -80,3 +80,7 @@ body {
 .badge-expired, .badge-vencida {
   @apply bg-gray-100 text-gray-500;
 }
+
+.badge-warning {
+  @apply bg-orange-100 text-orange-800;
+}

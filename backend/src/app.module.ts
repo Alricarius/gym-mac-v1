@@ -15,6 +15,8 @@ import { ClassesModule } from './modules/classes/classes.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { TasksModule } from './modules/tasks/tasks.module';
+import { BranchesModule } from './modules/branches/branches.module';
+import { InventoryModule } from './modules/inventory/inventory.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { TasksModule } from './modules/tasks/tasks.module';
     BookingsModule,
     NotificationsModule,
     TasksModule,
+    BranchesModule,
+    InventoryModule,
   ],
 })
 export class AppModule {}

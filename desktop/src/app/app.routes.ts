@@ -162,6 +162,55 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'branches',
+        loadComponent: () =>
+          import('./features/branches/pages/branch-list/branch-list.component').then(
+            (m) => m.BranchListComponent,
+          ),
+      },
+      {
+        path: 'branches/new',
+        loadComponent: () =>
+          import('./features/branches/pages/branch-form/branch-form.component').then(
+            (m) => m.BranchFormComponent,
+          ),
+      },
+      {
+        path: 'branches/:id',
+        loadComponent: () =>
+          import('./features/branches/pages/branch-form/branch-form.component').then(
+            (m) => m.BranchFormComponent,
+          ),
+      },
+      {
+        path: 'inventory',
+        loadComponent: () =>
+          import('./features/inventory/pages/inventory-list/inventory-list.component').then(
+            (m) => m.InventoryListComponent,
+          ),
+      },
+      {
+        path: 'inventory/new',
+        loadComponent: () =>
+          import('./features/inventory/pages/inventory-form/inventory-form.component').then(
+            (m) => m.InventoryFormComponent,
+          ),
+      },
+      {
+        path: 'inventory/:id',
+        loadComponent: () =>
+          import('./features/inventory/pages/inventory-form/inventory-form.component').then(
+            (m) => m.InventoryFormComponent,
+          ),
+      },
+      {
+        path: 'inventory/:itemId/loan',
+        loadComponent: () =>
+          import('./features/inventory/pages/inventory-loan-form/inventory-loan-form.component').then(
+            (m) => m.InventoryLoanFormComponent,
+          ),
+      },
+      {
         path: 'notifications',
         loadComponent: () =>
           import('./features/notifications/pages/notification-center/notification-center.component').then(
