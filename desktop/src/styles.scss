@@ -2,14 +2,79 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import './styles/theme.scss';
+
+:root {
+  // Primary
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-primary-active: #3730A3;
+  --color-primary-light: #EEF2FF;
+  --color-primary-border: #C7D2FE;
+
+  // Neutral
+  --color-bg: #F8FAFC;
+  --color-surface: #FFFFFF;
+  --color-surface-hover: #F1F5F9;
+  --color-border: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+
+  // Text
+  --color-text-primary: #0F172A;
+  --color-text-heading: #334155;
+  --color-text-body: #475569;
+  --color-text-secondary: #64748B;
+  --color-text-muted: #94A3B8;
+  --color-text-muted-2: #7C8BA0;
+  --color-text-disabled: #CBD5E1;
+
+  // Sidebar
+  --color-sidebar-bg: #1E293B;
+  --color-sidebar-hover: #334155;
+  --color-sidebar-text: #FFFFFF;
+  --color-sidebar-text-muted: #CBD5E1;
+
+  // Semantic
+  --color-success: #10B981;
+  --color-success-bg: #D1FAE5;
+  --color-success-text: #065F46;
+  --color-warning: #F59E0B;
+  --color-warning-bg: #FEF3C7;
+  --color-warning-text: #92400E;
+  --color-error: #EF4444;
+  --color-error-bg: #FEE2E2;
+  --color-error-text: #991B1B;
+  --color-accent: #0EA5E9;
+  --color-accent-bg: #E0F2FE;
+
+  // Typography
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+
+  // Border radius
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  // Shadows
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
 
 html, body { height: 100%; }
 
 body {
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  background: #f5f6fa;
+  font-family: var(--font-family);
+  background: var(--color-bg);
+  color: var(--color-text-body);
 }
 
 .page {
@@ -21,11 +86,13 @@ body {
 }
 
 .page-header h1 {
-  @apply text-2xl font-semibold text-gray-800;
+  @apply text-2xl font-semibold;
+  color: var(--color-text-primary);
 }
 
 .table-container {
-  @apply bg-white rounded-lg shadow-sm overflow-hidden;
+  box-shadow: var(--shadow-sm);
+  @apply bg-white rounded-lg overflow-hidden;
 }
 
 .search-bar {
@@ -33,16 +100,24 @@ body {
 }
 
 .search-bar input {
-  @apply w-full px-4 py-2 border border-gray-300 rounded-lg text-sm
-         focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent;
+  @apply w-full px-4 py-2 rounded-lg text-sm focus:outline-none focus:ring-2 focus:border-transparent;
+  border: 1px solid var(--color-border);
+  focus-ring-color: var(--color-primary);
+}
+
+.search-bar input:focus {
+  border-color: transparent;
+  ring-color: var(--color-primary);
 }
 
 .empty {
-  @apply text-center text-gray-400 py-8 text-sm;
+  @apply text-center py-8 text-sm;
+  color: var(--color-text-secondary);
 }
 
 .loading {
-  @apply text-center text-gray-400 py-4 text-sm;
+  @apply text-center py-4 text-sm;
+  color: var(--color-text-secondary);
 }
 
 .alert {
@@ -50,41 +125,53 @@ body {
 }
 
 .alert-error {
-  @apply bg-red-50 text-red-700 border border-red-200;
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 1px solid #FECACA;
 }
 
 .alert-success {
-  @apply bg-green-50 text-green-700 border border-green-200;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid #A7F3D0;
 }
 
 .alert-warning {
-  @apply bg-orange-50 text-orange-700 border border-orange-200;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 1px solid #FDE68A;
 }
 
 .badge {
-  @apply inline-flex px-2 py-0.5 text-xs font-medium rounded-full;
+  @apply inline-flex px-2.5 py-0.5 text-xs font-medium rounded-full;
 }
 
 .badge-active, .badge-activo {
-  @apply bg-green-100 text-green-800;
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
 }
 
 .badge-inactive, .badge-inactivo {
-  @apply bg-gray-100 text-gray-600;
+  background: #F1F5F9;
+  color: #475569;
 }
 
 .badge-paused, .badge-pausada {
-  @apply bg-yellow-100 text-yellow-800;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
 }
 
 .badge-cancelled, .badge-cancelada {
-  @apply bg-red-100 text-red-800;
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
 }
 
 .badge-expired, .badge-vencida {
-  @apply bg-gray-100 text-gray-500;
+  background: #F1F5F9;
+  color: #64748B;
 }
 
 .badge-warning {
-  @apply bg-orange-100 text-orange-800;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
 }

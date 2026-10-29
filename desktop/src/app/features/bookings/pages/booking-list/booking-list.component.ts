@@ -60,22 +60,22 @@ const STATUS_LABELS: Record<string, string> = {
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Miembro</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Clase</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Fecha</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Horario</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
+                <tr class="border-b border-slate-200">
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Miembro</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Clase</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Fecha</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Horario</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (b of bookings(); track b.id) {
-                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="py-3 px-4 font-medium text-gray-800">{{ b.member?.fullName || '—' }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ b.gymClass?.name || '—' }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ b.bookingDate | date: 'dd/MM/yyyy' }}</td>
-                    <td class="py-3 px-4 text-gray-500">
+                  <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="py-3 px-4 font-medium text-slate-800">{{ b.member?.fullName || '—' }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ b.gymClass?.name || '—' }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ b.bookingDate | date: 'dd/MM/yyyy' }}</td>
+                    <td class="py-3 px-4 text-slate-500">
                       @if (b.schedule) {
                         {{ b.schedule.startTime.slice(0,5) }} - {{ b.schedule.endTime.slice(0,5) }}
                       } @else { — }

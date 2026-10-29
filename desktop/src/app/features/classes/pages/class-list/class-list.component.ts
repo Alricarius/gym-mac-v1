@@ -41,37 +41,37 @@ const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Nombre</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Capacidad</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Horarios</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
+                <tr class="border-b border-slate-200">
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Nombre</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Capacidad</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Horarios</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (c of classes(); track c.id) {
-                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
                     <td class="py-3 px-4">
-                      <span class="flex items-center gap-2 font-medium text-gray-800">
+                      <span class="flex items-center gap-2 font-medium text-slate-800">
                         @if (c.color) {
                           <span class="inline-block w-3 h-3 rounded-full" [style.background]="c.color"></span>
                         }
                         {{ c.name }}
                       </span>
                     </td>
-                    <td class="py-3 px-4 text-gray-500">{{ c.capacity }}</td>
-                    <td class="py-3 px-4 text-gray-500">
+                    <td class="py-3 px-4 text-slate-500">{{ c.capacity }}</td>
+                    <td class="py-3 px-4 text-slate-500">
                         @if (c.schedules.length) {
                           <span class="text-xs space-x-1">
                             @for (s of c.schedules; track s.id) {
-                              <span class="inline-block bg-gray-100 rounded px-1.5 py-0.5 mb-0.5">
+                              <span class="inline-block bg-slate-100 rounded px-1.5 py-0.5 mb-0.5">
                                 {{ DAY_NAMES[s.dayOfWeek] }} {{ s.startTime.slice(0, 5) }}
                               </span>
                             }
                           </span>
                         } @else {
-                          <span class="text-gray-400 italic">Sin horarios</span>
+                          <span class="text-slate-500 italic">Sin horarios</span>
                         }
                     </td>
                     <td class="py-3 px-4">

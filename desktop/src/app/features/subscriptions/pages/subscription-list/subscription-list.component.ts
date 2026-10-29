@@ -29,22 +29,22 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Miembro</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Plan</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Inicio</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Fin</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
+                <tr class="border-b border-slate-200">
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Miembro</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Plan</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Inicio</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Fin</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (sub of subscriptions(); track sub.id) {
-                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="py-3 px-4 font-medium text-gray-800">{{ sub.member?.fullName ?? sub.memberId }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ sub.plan?.name ?? sub.planId }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ sub.startDate }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ sub.endDate }}</td>
+                  <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="py-3 px-4 font-medium text-slate-800">{{ sub.member?.fullName ?? sub.memberId }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ sub.plan?.name ?? sub.planId }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ sub.startDate }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ sub.endDate }}</td>
                     <td class="py-3 px-4">
                       <span class="badge badge-{{ sub.status }}">
                         {{ statusLabel(sub.status) }}
@@ -66,7 +66,7 @@ import { ConfirmDialogComponent } from '../../../../shared/components/confirm-di
                         <button mat-stroked-button color="warn" (click)="cancel(sub)">Cancelar</button>
                       }
                       @if (sub.status === 'cancelled' || sub.status === 'expired') {
-                        <span class="text-gray-300">—</span>
+                        <span class="text-slate-500">—</span>
                       }
                     </td>
                   </tr>

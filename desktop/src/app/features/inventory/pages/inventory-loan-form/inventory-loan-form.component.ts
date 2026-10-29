@@ -30,7 +30,7 @@ interface MemberOption {
       @if (item) {
         <mat-card class="!rounded-xl !shadow-sm !mb-6">
           <mat-card-content class="!p-4">
-            <p class="text-sm text-gray-600">
+            <p class="text-sm text-slate-600">
               <strong>Equipo:</strong> {{ item.name }} |
               <strong>Disponible:</strong> {{ item.availableQuantity }} /
               <strong>Total:</strong> {{ item.totalQuantity }}
@@ -84,11 +84,11 @@ interface MemberOption {
   styles: [`
     .page { padding: 24px; max-width: 600px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
     .full-width { width: 100%; margin-bottom: 16px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
-    .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
-    .loading { text-align: center; padding: 40px; color: #999; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
+    .loading { text-align: center; padding: 40px; color: var(--color-text-muted); }
   `],
 })
 export class InventoryLoanFormComponent implements OnInit {

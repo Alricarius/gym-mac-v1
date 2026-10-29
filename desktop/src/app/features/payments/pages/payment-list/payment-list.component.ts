@@ -28,23 +28,23 @@ import { PaymentService, Payment } from '../../services/payment.service';
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Miembro</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Monto</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Método</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Referencia</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Fecha</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
+                <tr class="border-b border-slate-200">
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Miembro</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Monto</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Método</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Referencia</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Fecha</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (payment of payments(); track payment.id) {
-                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="py-3 px-4 font-medium text-gray-800">{{ payment.member?.fullName ?? payment.subscription?.member?.fullName ?? payment.memberId }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ '$' + payment.amount }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ methodLabel(payment.method) }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ payment.reference ?? '—' }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ payment.paidAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="py-3 px-4 font-medium text-slate-800">{{ payment.member?.fullName ?? payment.subscription?.member?.fullName ?? payment.memberId }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ '$' + payment.amount }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ methodLabel(payment.method) }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ payment.reference ?? '—' }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ payment.paidAt | date:'dd/MM/yyyy HH:mm' }}</td>
                     <td class="py-3 px-4">
                       <button mat-stroked-button (click)="viewReceipt(payment)">Ver recibo</button>
                     </td>

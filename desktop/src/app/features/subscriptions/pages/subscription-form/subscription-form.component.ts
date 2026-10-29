@@ -103,12 +103,12 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
   styles: [`
     .page { padding: 24px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
-    .error-msg { color: #e74c3c; background: #fdecea; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
+    .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
     .payment-card { margin-bottom: 16px; }
-    .payment-card .payment-title { margin: 0 0 16px; font-size: 14px; font-weight: 600; color: #333; }
-    .loading { text-align: center; color: #999; padding: 20px; }
+    .payment-card .payment-title { margin: 0 0 16px; font-size: 14px; font-weight: 600; color: var(--color-text-heading); }
+    .loading { text-align: center; color: var(--color-text-muted); padding: 20px; }
   `],
 })
 export class SubscriptionFormComponent implements OnInit {

@@ -1,75 +1,65 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BranchService, CreateBranchDto } from '../../services/branch.service';
 
 @Component({
   selector: 'app-branch-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatCardModule],
   template: `
     <div class="page">
-      <div class="page-header">
-        <h1>{{ isEdit ? 'Editar sucursal' : 'Nueva sucursal' }}</h1>
-        <button class="btn-secondary" (click)="cancel()">Volver</button>
-      </div>
+      <mat-card class="!rounded-xl !shadow-sm">
+        <mat-card-header>
+          <mat-card-title>{{ isEdit ? 'Editar sucursal' : 'Nueva sucursal' }}</mat-card-title>
+        </mat-card-header>
 
-      <div class="card">
-        <form (ngSubmit)="onSubmit()">
-          <div class="form-group">
-            <label for="name">Nombre *</label>
-            <input id="name" type="text" [(ngModel)]="dto.name" name="name" required placeholder="Nombre de la sucursal" />
-          </div>
+        <mat-card-content>
+          <form (ngSubmit)="onSubmit()">
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Nombre *</mat-label>
+              <input matInput id="name" type="text" [(ngModel)]="dto.name" name="name" required placeholder="Nombre de la sucursal" />
+            </mat-form-field>
 
-          <div class="form-group">
-            <label for="address">Dirección</label>
-            <input id="address" type="text" [(ngModel)]="dto.address" name="address" placeholder="Dirección" />
-          </div>
+            <mat-form-field appearance="outline" class="w-full">
+              <mat-label>Dirección</mat-label>
+              <input matInput id="address" type="text" [(ngModel)]="dto.address" name="address" placeholder="Dirección" />
+            </mat-form-field>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="phone">Teléfono</label>
-              <input id="phone" type="text" [(ngModel)]="dto.phone" name="phone" placeholder="555-0000" />
+            <div class="flex gap-4">
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Teléfono</mat-label>
+                <input matInput id="phone" type="text" [(ngModel)]="dto.phone" name="phone" placeholder="555-0000" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Email</mat-label>
+                <input matInput id="email" type="email" [(ngModel)]="dto.email" name="email" placeholder="correo@ejemplo.com" />
+              </mat-form-field>
             </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input id="email" type="email" [(ngModel)]="dto.email" name="email" placeholder="correo@ejemplo.com" />
+
+            @if (error) {
+              <p class="error-msg">{{ error }}</p>
+            }
+
+            <div class="form-actions">
+              <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+              <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
+                {{ submitting ? 'Guardando...' : 'Guardar' }}
+              </button>
             </div>
-          </div>
-
-          @if (error) {
-            <p class="error-msg">{{ error }}</p>
-          }
-
-          <div class="form-actions">
-            <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
-            <button type="submit" class="btn-primary" [disabled]="submitting">
-              {{ submitting ? 'Guardando...' : 'Guardar' }}
-            </button>
-          </div>
-        </form>
-      </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
     </div>
   `,
   styles: [`
     .page { padding: 24px; max-width: 600px; }
-    .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
-    .card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 24px; }
-    .form-row { display: flex; gap: 16px; }
-    .form-row .form-group { flex: 1; }
-    .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #333; }
-    input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #667eea; }
-    textarea { resize: vertical; }
-    .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
-    .btn-primary { padding: 10px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover:not(:disabled) { background: #5a6fd6; }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { padding: 10px 24px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-    .btn-secondary:hover { background: #f5f5f5; }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
   `],
 })
 export class BranchFormComponent implements OnInit {

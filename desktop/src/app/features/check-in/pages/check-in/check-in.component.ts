@@ -51,14 +51,14 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
                          [class.border-green-400]="verifiedMember()?.member?.id === member.id"
                          [class.bg-green-50]="verifiedMember()?.member?.id === member.id">
                       <div class="flex flex-col">
-                        <span class="font-medium text-gray-800">{{ member.fullName }}</span>
+                        <span class="font-medium text-slate-800">{{ member.fullName }}</span>
                         @if (member.email) {
-                          <span class="text-sm text-gray-500">{{ member.email }}</span>
+                          <span class="text-sm text-slate-500">{{ member.email }}</span>
                         }
                       </div>
                       <div class="flex gap-2">
                         @if (loadingVerify() === member.id) {
-                          <mat-chip class="!bg-gray-100">Verificando...</mat-chip>
+                          <mat-chip class="!bg-slate-100">Verificando...</mat-chip>
                         } @else {
                           <button mat-raised-button color="primary" (click)="doEntry(member)">
                             <mat-icon>login</mat-icon>
@@ -89,7 +89,7 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
                   <p class="text-sm mt-1">Pertenece a <strong>{{ wm.branchName }}</strong>.</p>
                   <p class="text-sm">¿Deseas cambiar su sucursal a <strong>{{ branchStore.selectedBranch()?.name }}</strong> y registrar entrada?</p>
                   <div class="flex gap-2 mt-3">
-                    <button mat-flat-button color="primary" (click)="changeBranchAndEnter()">
+                    <button mat-raised-button color="primary" (click)="changeBranchAndEnter()">
                       Sí, cambiar y entrar
                     </button>
                     <button mat-stroked-button (click)="wrongBranchMember.set(null)">Cancelar</button>
@@ -110,12 +110,12 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
               @if (activeMembers().length > 0) {
                 <div class="flex flex-col gap-2 mt-2">
                   @for (item of activeMembers(); track item.id) {
-                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                    <div class="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
                       <div class="flex flex-col">
                         <span class="font-medium text-sm">{{ item.fullName }}</span>
-                        <span class="text-xs text-gray-500">Desde {{ item.createdAt | date:'HH:mm' }}</span>
+                        <span class="text-xs text-slate-500">Desde {{ item.createdAt | date:'HH:mm' }}</span>
                       </div>
-                      <mat-icon class="text-green-500 text-lg">circle</mat-icon>
+                      <mat-icon class="text-emerald-500 text-lg">circle</mat-icon>
                     </div>
                   }
                 </div>
@@ -144,8 +144,8 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
     </div>
   `,
   styles: [`
-    .chip-connected { background: #dcfce7 !important; color: #166534 !important; }
-    .chip-disconnected { background: #fef2f2 !important; color: #991b1b !important; }
+    .chip-connected { background: var(--color-success-bg) !important; color: var(--color-success-text) !important; }
+    .chip-disconnected { background: var(--color-error-bg) !important; color: var(--color-error-text) !important; }
   `],
 })
 export class CheckInComponent implements OnInit, OnDestroy {

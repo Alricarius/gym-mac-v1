@@ -18,6 +18,7 @@ import { PlanService, Plan, CreatePlanDto } from '../../services/plan.service';
           <mat-card-title>{{ isEdit ? 'Editar plan' : 'Nuevo plan' }}</mat-card-title>
         </mat-card-header>
 
+        <mat-card-content>
         <form (ngSubmit)="onSubmit()" #form="ngForm">
           <div class="form-row">
             <mat-form-field appearance="outline" class="flex-1">
@@ -57,14 +58,15 @@ import { PlanService, Plan, CreatePlanDto } from '../../services/plan.service';
             </button>
           </div>
         </form>
+        </mat-card-content>
       </mat-card>
     </div>
   `,
   styles: [`
     .page { padding: 24px; }
     .form-row { display: flex; gap: 16px; }
-    .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
-    .error-msg { color: #e74c3c; background: #fdecea; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
+    .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
   `],
 })
 export class PlanFormComponent implements OnInit {

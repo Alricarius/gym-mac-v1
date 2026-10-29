@@ -64,10 +64,10 @@ import { BranchStore, Branch } from '../../../../core/services/branch-store.serv
   styles: [`
     .page { padding: 24px; max-width: 600px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
     mat-card { padding: 24px; }
     mat-form-field { width: 100%; margin-bottom: 4px; }
-    .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
     .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
   `],
 })

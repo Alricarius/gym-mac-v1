@@ -135,6 +135,6 @@ Los links activos se marcan con la clase `.active` que aplica `background: rgba(
 - [ ] `mat-snack-bar` para notificaciones de éxito/error toast
 - [ ] `mat-progress-spinner` en loadings
 - [ ] `mat-error` + validación visual en formularios (MemberForm, PlanForm, etc.)
-- [ ] Tema Material personalizado con colores del gimnasio (reemplazar `indigo-pink.css`)
+- [x] Tema Material personalizado con colores del gimnasio (indigo + sky) reemplaza `indigo-pink.css`
 - [ ] Responsive layout con Tailwind breakpoints
 - [ ] Ajustar budget en `angular.json` si el bundle inicial excede 512 kB

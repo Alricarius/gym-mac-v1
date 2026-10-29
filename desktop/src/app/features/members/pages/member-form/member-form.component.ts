@@ -100,8 +100,8 @@ import { BranchStore, Branch } from '../../../../core/services/branch-store.serv
     .page { padding: 24px; max-width: 720px; }
     .form-row { display: flex; gap: 16px; }
     .form-row mat-form-field { flex: 1; }
-    .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
   `],
 })
 export class MemberFormComponent implements OnInit {

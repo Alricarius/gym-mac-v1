@@ -15,7 +15,7 @@ import { AuthStore } from '../../services/auth.store';
   template: `
     <div class="login-container">
       <div class="login-card">
-        <mat-icon class="login-icon">fitness_center</mat-icon>
+        <mat-icon class="login-icon" aria-hidden="true">fitness_center</mat-icon>
         <h1>GymAdmin</h1>
         <p class="subtitle">Inicia sesión para continuar</p>
 
@@ -31,7 +31,9 @@ import { AuthStore } from '../../services/auth.store';
               placeholder="admin@admin.com"
               autocomplete="email"
             />
-            <mat-icon matSuffix>email</mat-icon>
+            <button matSuffix mat-icon-button type="button" tabindex="-1" aria-hidden="true">
+              <mat-icon>email</mat-icon>
+            </button>
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="w-full">
@@ -67,34 +69,45 @@ import { AuthStore } from '../../services/auth.store';
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--color-primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 50%),
+                  radial-gradient(circle at 80% 50%, rgba(255,255,255,0.04) 0%, transparent 50%);
     }
 
     .login-card {
-      background: white;
-      border-radius: 12px;
-      padding: 40px;
+      background: var(--color-surface);
+      border-radius: var(--radius-xl);
+      padding: 2.5rem;
       width: 400px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 60px rgba(79, 70, 229, 0.2);
       text-align: center;
+      position: relative;
     }
 
     .login-icon {
       font-size: 48px !important;
       width: 48px !important;
       height: 48px !important;
-      color: #667eea;
+      color: var(--color-primary);
       margin-bottom: 8px;
     }
 
     h1 {
       margin: 0 0 4px;
       font-size: 24px;
-      color: #1a1a2e;
+      color: var(--color-text-primary);
     }
 
     .subtitle {
-      color: #666;
+      color: var(--color-text-secondary);
       margin: 0 0 24px;
       font-size: 14px;
     }
@@ -102,7 +115,7 @@ import { AuthStore } from '../../services/auth.store';
     :host ::ng-deep .mat-mdc-form-field { margin-bottom: 16px; }
 
     .error-msg {
-      color: #e74c3c;
+      color: var(--color-error-text);
       font-size: 13px;
       margin-top: 16px;
     }

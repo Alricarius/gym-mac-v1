@@ -25,20 +25,20 @@ import { Branch } from '../../../../core/services/branch-store.service';
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Nombre</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Dirección</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Teléfono</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
+                <tr class="border-b border-slate-200">
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Nombre</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Dirección</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Teléfono</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (branch of branches(); track branch.id) {
-                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="py-3 px-4 font-medium text-gray-800">{{ branch.name }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ branch.address || '-' }}</td>
-                    <td class="py-3 px-4 text-gray-500">{{ branch.phone || '-' }}</td>
+                  <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="py-3 px-4 font-medium text-slate-800">{{ branch.name }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ branch.address || '-' }}</td>
+                    <td class="py-3 px-4 text-slate-500">{{ branch.phone || '-' }}</td>
                     <td class="py-3 px-4">
                       <span class="badge badge-{{ branch.isActive ? 'active' : 'inactive' }}">
                         {{ branch.isActive ? 'Activa' : 'Inactiva' }}

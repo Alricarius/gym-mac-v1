@@ -1,6 +1,6 @@
 # Handoff — Gym Management System
 
-> Última actualización: 20/06/2026 — Iteración 10 completa (Configuración + Admin + Polish)
+> Última actualización: 21/06/2026 — Iteración 11 completa (Brand Identity & Design System)
 > Último commit: `8541ec4`
 
 ## Stack
@@ -280,6 +280,21 @@ cd desktop && pnpm start
 **Electron Builder**:
 - Config `electron-builder.yml` para macOS (dmg), Windows (nsis), Linux (AppImage)
 - `main` field en package.json apunta a `dist-electron/main.js`
+
+### Iteración 11 — Brand Identity & Design System
+
+- **Design Tokens**: CSS custom properties definidos en `:root` en styles.scss con paleta Indigo + Slate + colores semánticos
+- **Material Theme personalizado**: `src/styles/theme.scss` con paletas indigo (primary), sky (accent), red (warn), reemplaza `indigo-pink.css`
+- **Tipografía**: Inter reemplaza Roboto en index.html
+- **Sidebar**: Migrado a `bg-slate-800` con texto slate-400/slate-700, hover slate-700
+- **Login**: Fondo sólido indigo-600 con patrón decorativo CSS (sin degradado)
+- **Dashboard**: Chart.js resuelve `var(--color-primary)` via getComputedStyle
+- **13 componentes**: inline styles migrados a tokens CSS (payment-receipt, booking-form, booking-calendar, settings, user-form, payment-form, member-form, subscription-form, inventory-form, inventory-loan-form, plan-form, branch-form, check-in)
+- **Todas las clases `gray-*` → `slate-*`** en templates de listados y formularios (~25 archivos)
+- **Contraste mejorado**: opacity subido a 0.45 en other-month, text-muted usa slate-400/500
+- **index.html**: `lang="es"`, `title="GymAdmin"`, fuente Inter
+- **Default class color**: `#667eea` → `#4F46E5` (indigo-600)
+- **Budget**: anyComponentStyle ajustado a 3kB warning / 5kB error
 
 ## Temas pendientes
 

@@ -18,7 +18,7 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
   template: `
     <div class="p-6 max-w-2xl">
       <div class="flex justify-between items-center mb-6">
-        <h1 class="m-0 text-xl text-gray-900">{{ isEdit ? 'Editar clase' : 'Nueva clase' }}</h1>
+        <h1 class="m-0 text-xl text-slate-900">{{ isEdit ? 'Editar clase' : 'Nueva clase' }}</h1>
         <button mat-stroked-button (click)="cancel()">Volver</button>
       </div>
 
@@ -34,11 +34,11 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
               <input matInput id="capacity" type="number" [(ngModel)]="dto.capacity" name="capacity" required min="1" />
             </mat-form-field>
             <div class="w-40">
-              <span class="text-sm font-medium text-gray-700">Color</span>
+              <span class="text-sm font-medium text-slate-700">Color</span>
               <div class="flex gap-2 items-center mt-1">
                 <input id="color" type="color" [(ngModel)]="dto.color" name="color" class="w-10 h-10 p-0.5 cursor-pointer border-0" />
                 <mat-form-field appearance="outline" class="flex-1">
-                  <input matInput type="text" [(ngModel)]="dto.color" name="colorText" maxlength="7" placeholder="#667eea" />
+                  <input matInput type="text" [(ngModel)]="dto.color" name="colorText" maxlength="7" placeholder="#4F46E5" />
                 </mat-form-field>
               </div>
             </div>
@@ -49,18 +49,18 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
             <textarea matInput id="description" [(ngModel)]="dto.description" name="description" rows="2" placeholder="Descripción opcional..."></textarea>
           </mat-form-field>
 
-          <div class="border-t border-gray-200 pt-4 mt-4">
+          <div class="border-t border-slate-200 pt-4 mt-4">
             <div class="flex items-center justify-between mb-3">
-              <span class="font-semibold text-sm text-gray-700">Horarios</span>
+              <span class="font-semibold text-sm text-slate-700">Horarios</span>
               <button mat-stroked-button type="button" (click)="addSchedule()">
                 <mat-icon class="text-sm">add</mat-icon> Agregar horario
               </button>
             </div>
             @if (schedules().length === 0) {
-              <p class="text-gray-400 text-sm italic">Sin horarios. Agregá al menos un horario.</p>
+              <p class="text-slate-500 text-sm italic">Sin horarios. Agregá al menos un horario.</p>
             }
             @for (s of schedules(); track $index; let i = $index) {
-              <div class="flex gap-3 items-end mb-2 p-3 bg-gray-50 rounded-lg">
+              <div class="flex gap-3 items-end mb-2 p-3 bg-slate-50 rounded-lg">
                 <mat-form-field appearance="outline" class="flex-1">
                   <mat-label>Día</mat-label>
                   <mat-select [(ngModel)]="s.dayOfWeek" name="day_{{$index}}">
@@ -70,12 +70,12 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
                   </mat-select>
                 </mat-form-field>
                 <div class="w-28">
-                  <label class="text-xs font-medium text-gray-700 mb-1 block">Desde</label>
-                  <input type="time" [(ngModel)]="s.startTime" name="start_{{$index}}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                  <label class="text-xs font-medium text-slate-700 mb-1 block">Desde</label>
+                  <input type="time" [(ngModel)]="s.startTime" name="start_{{$index}}" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
                 </div>
                 <div class="w-28">
-                  <label class="text-xs font-medium text-gray-700 mb-1 block">Hasta</label>
-                  <input type="time" [(ngModel)]="s.endTime" name="end_{{$index}}" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                  <label class="text-xs font-medium text-slate-700 mb-1 block">Hasta</label>
+                  <input type="time" [(ngModel)]="s.endTime" name="end_{{$index}}" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm" />
                 </div>
                 <button mat-icon-button type="button" (click)="removeSchedule(i)" class="text-red-500">
                   <mat-icon>close</mat-icon>
@@ -85,10 +85,10 @@ const DAY_NAMES = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Vierne
           </div>
 
           @if (error) {
-            <p class="text-red-500 text-sm mb-4">{{ error }}</p>
+            <p class="text-red-600 text-sm mb-4">{{ error }}</p>
           }
 
-          <div class="flex justify-end gap-3 mt-2">
+          <div class="flex justify-end gap-3 mt-4">
             <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
             <button mat-flat-button type="submit" color="primary" [disabled]="submitting">
               {{ submitting ? 'Guardando...' : 'Guardar' }}
@@ -111,7 +111,7 @@ export class ClassFormComponent implements OnInit {
   dto: CreateClassDto = {
     name: '',
     capacity: 20,
-    color: '#667eea',
+    color: '#4F46E5',
     description: '',
   };
   schedules = signal<CreateScheduleDto[]>([]);
@@ -129,7 +129,7 @@ export class ClassFormComponent implements OnInit {
           this.dto = {
             name: c.name,
             capacity: c.capacity,
-            color: c.color || '#667eea',
+            color: c.color || '#4F46E5',
             description: c.description || '',
           };
           this.existingSchedules = c.schedules || [];

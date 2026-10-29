@@ -92,11 +92,11 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
   styles: [`
     .page { padding: 24px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
     .full-width { width: 100%; margin-bottom: 16px; }
-    .error-msg { color: #e74c3c; background: #fdecea; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; }
-    .loading { text-align: center; color: #999; padding: 20px; }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
+    .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
+    .loading { text-align: center; color: var(--color-text-muted); padding: 20px; }
   `],
 })
 export class PaymentFormComponent implements OnInit {

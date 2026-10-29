@@ -28,15 +28,15 @@ const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
             <button mat-stroked-button (click)="prevMonth()">
               <mat-icon>chevron_left</mat-icon>
             </button>
-            <h2 class="text-lg font-semibold text-gray-800">{{ monthYear() }}</h2>
+            <h2 class="text-lg font-semibold text-slate-800">{{ monthYear() }}</h2>
             <button mat-stroked-button (click)="nextMonth()">
               <mat-icon>chevron_right</mat-icon>
             </button>
           </div>
 
-          <div class="grid grid-cols-7 gap-px bg-gray-200 rounded-lg overflow-hidden">
+          <div class="grid grid-cols-7 gap-px bg-slate-200 rounded-lg overflow-hidden">
             @for (d of DAY_NAMES; track d) {
-              <div class="bg-gray-50 text-center text-xs font-semibold text-gray-500 uppercase py-2">{{ d }}</div>
+              <div class="bg-slate-50 text-center text-xs font-semibold text-slate-500 uppercase py-2">{{ d }}</div>
             }
             @for (day of calendarDays(); track day.date) {
               <div class="calendar-cell"
@@ -47,7 +47,8 @@ const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
                 <div class="mt-1 space-y-0.5">
                   @for (cls of day.classes; track cls.id) {
                     <span class="calendar-class"
-                      [style.background]="cls.color || '#667eea'">
+                      [style.background]="cls.color || '#4F46E5'"
+                      [style.color]="classTextColor(cls.color)">
                       {{ cls.name }}
                     </span>
                   }
@@ -62,7 +63,7 @@ const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
   styles: [`
     .page { padding: 24px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
     .calendar-cell {
       background: white;
       min-height: 90px;
@@ -70,14 +71,13 @@ const DAY_NAMES = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
       cursor: pointer;
       transition: background 0.15s;
     }
-    .calendar-cell:hover { background: #f0f4ff; }
-    .calendar-cell.other-month { opacity: 0.35; }
-    .calendar-cell.today { background: #eef2ff; }
+    .calendar-cell:hover { background: var(--color-primary-light); }
+    .calendar-cell.other-month { opacity: 0.45; }
+    .calendar-cell.today { background: var(--color-primary-light); }
     .calendar-class {
       display: block;
-      font-size: 10px;
-      color: white;
-      padding: 1px 4px;
+      font-size: 11px;
+      padding: 2px 4px;
       border-radius: 3px;
       white-space: nowrap;
       overflow: hidden;
@@ -89,6 +89,16 @@ export class BookingCalendarComponent implements OnInit {
   readonly DAY_NAMES = DAY_NAMES;
   private readonly classService = inject(ClassService);
   private readonly router = inject(Router);
+
+  classTextColor(bg?: string): string {
+    if (!bg) return 'white';
+    const hex = bg.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    return luminance > 0.55 ? '#1E293B' : 'white';
+  }
 
   readonly monthYear = signal('');
   readonly calendarDays = signal<CalendarDay[]>([]);

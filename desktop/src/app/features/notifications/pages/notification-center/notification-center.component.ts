@@ -15,17 +15,17 @@ import { PaginatedNotifications } from '../../interfaces/notification.interface'
   ],
   template: `
     <div class="p-8">
-      <h1 class="text-2xl font-medium text-gray-800 mb-6">Centro de Notificaciones</h1>
+      <h1 class="text-2xl font-medium text-slate-800 mb-6">Centro de Notificaciones</h1>
 
       @if (!notifications) {
         <mat-card class="!rounded-xl !shadow-sm">
-          <mat-card-content class="p-12 text-center text-gray-400">
+          <mat-card-content class="p-12 text-center text-slate-400">
             Cargando notificaciones...
           </mat-card-content>
         </mat-card>
       } @else if (!notifications.data.length) {
         <mat-card class="!rounded-xl !shadow-sm">
-          <mat-card-content class="p-12 text-center text-gray-400">
+          <mat-card-content class="p-12 text-center text-slate-400">
             <mat-icon class="text-5xl mb-4">notifications_none</mat-icon>
             <p>No hay notificaciones</p>
           </mat-card-content>
@@ -35,21 +35,21 @@ import { PaginatedNotifications } from '../../interfaces/notification.interface'
           <mat-card-content class="p-0">
             <div class="divide-y">
               @for (item of notifications.data; track item.id) {
-                <div class="flex items-start gap-4 p-4 hover:bg-gray-50"
+                <div class="flex items-start gap-4 p-4 hover:bg-slate-50"
                      [class.bg-blue-50]="!item.isRead">
                   <mat-icon class="mt-1 text-lg"
                             [class.text-blue-500]="!item.isRead"
-                            [class.text-gray-400]="item.isRead">
+                            [class.text-slate-400]="item.isRead">
                     {{ item.isRead ? 'notifications' : 'notification_important' }}
                   </mat-icon>
                   <div class="flex-1 min-w-0">
-                    <p class="font-medium text-sm text-gray-800">{{ item.subject }}</p>
-                    <p class="text-sm text-gray-500 mt-0.5">{{ item.body }}</p>
-                    <p class="text-xs text-gray-400 mt-1">
+                    <p class="font-medium text-sm text-slate-800">{{ item.subject }}</p>
+                    <p class="text-sm text-slate-500 mt-0.5">{{ item.body }}</p>
+                    <p class="text-xs text-slate-400 mt-1">
                       {{ item.sentAt | date:'dd/MM/yy HH:mm' }}
                       @if (item.channel !== 'in_app') {
                         <span class="ml-2 uppercase text-[10px] font-medium px-1.5 py-0.5 rounded"
-                              [class.bg-green-100]="item.channel === 'email'"
+                              [class.bg-emerald-100]="item.channel === 'email'"
                               [class.bg-purple-100]="item.channel === 'whatsapp'">
                           {{ item.channel }}
                         </span>

@@ -18,10 +18,10 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
   ],
   template: `
     <div class="p-8">
-      <h1 class="text-2xl font-medium text-gray-800 mb-6">Dashboard</h1>
+      <h1 class="text-2xl font-medium text-slate-800 mb-6">Dashboard</h1>
 
       @if (loading()) {
-        <div class="flex items-center justify-center py-20 text-gray-400">
+        <div class="flex items-center justify-center py-20 text-slate-500">
           <div class="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin mr-3"></div>
           Cargando datos...
         </div>
@@ -29,10 +29,10 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
         <mat-card class="!rounded-xl !shadow-sm !border !border-red-200">
           <mat-card-content class="p-6 text-center">
             <mat-icon class="text-red-400 text-4xl mb-3">error_outline</mat-icon>
-            <p class="text-gray-700 mb-2">No se pudieron cargar los datos del dashboard</p>
-            <p class="text-sm text-gray-400 mb-4">{{ error() }}</p>
+            <p class="text-slate-700 mb-2">No se pudieron cargar los datos del dashboard</p>
+            <p class="text-sm text-slate-500 mb-4">{{ error() }}</p>
             <button mat-stroked-button color="primary" (click)="loadDashboard()">
-              <mat-icon>refresh</mat-icon>
+              <mat-icon class="mr-1">refresh</mat-icon>
               Reintentar
             </button>
           </mat-card-content>
@@ -42,11 +42,11 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
           <mat-card class="!rounded-xl !shadow-sm">
             <mat-card-content class="p-5 flex items-center gap-4">
               <div class="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center">
-                <mat-icon class="text-green-600">payments</mat-icon>
+                <mat-icon class="text-emerald-600">payments</mat-icon>
               </div>
               <div>
-                <p class="text-sm text-gray-500">Ingresos hoy</p>
-                <p class="text-2xl font-bold text-gray-800">{{ '$' + (dashboard()!.todayIncome | number:'1.2-2') }}</p>
+                <p class="text-sm text-slate-500">Ingresos hoy</p>
+                <p class="text-2xl font-bold text-slate-800">{{ '$' + (dashboard()!.todayIncome | number:'1.2-2') }}</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -57,8 +57,8 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
                 <mat-icon class="text-blue-600">people</mat-icon>
               </div>
               <div>
-                <p class="text-sm text-gray-500">Miembros activos</p>
-                <p class="text-2xl font-bold text-gray-800">{{ dashboard()!.activeMembers }}</p>
+                <p class="text-sm text-slate-500">Miembros activos</p>
+                <p class="text-2xl font-bold text-slate-800">{{ dashboard()!.activeMembers }}</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -69,8 +69,8 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
                 <mat-icon class="text-purple-600">login</mat-icon>
               </div>
               <div>
-                <p class="text-sm text-gray-500">Check-ins hoy</p>
-                <p class="text-2xl font-bold text-gray-800">{{ dashboard()!.todayCheckIns }}</p>
+                <p class="text-sm text-slate-500">Check-ins hoy</p>
+                <p class="text-2xl font-bold text-slate-800">{{ dashboard()!.todayCheckIns }}</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -81,8 +81,8 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
                 <mat-icon class="text-orange-600">assignment</mat-icon>
               </div>
               <div>
-                <p class="text-sm text-gray-500">Suscripciones activas</p>
-                <p class="text-2xl font-bold text-gray-800">{{ dashboard()!.activeSubscriptions }}</p>
+                <p class="text-sm text-slate-500">Suscripciones activas</p>
+                <p class="text-2xl font-bold text-slate-800">{{ dashboard()!.activeSubscriptions }}</p>
               </div>
             </mat-card-content>
           </mat-card>
@@ -103,7 +103,7 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
                   </canvas>
                 </div>
               } @else {
-                <p class="text-gray-400 text-center py-8">No hay ingresos registrados en los últimos 7 días</p>
+                <p class="text-slate-500 text-center py-8">No hay ingresos registrados en los últimos 7 días</p>
               }
             </mat-card-content>
           </mat-card>
@@ -115,25 +115,25 @@ import { ReportService, DashboardData } from '../../../reports/services/report.s
             <mat-card-content class="p-5">
               <div class="space-y-4">
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Total miembros</span>
-                  <span class="font-semibold text-lg">{{ dashboard()!.totalMembers }}</span>
+                  <span class="text-slate-600">Total miembros</span>
+                  <span class="font-semibold text-lg text-slate-800">{{ dashboard()!.totalMembers }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Miembros activos</span>
-                  <span class="font-semibold text-lg">{{ dashboard()!.activeMembers }}</span>
+                  <span class="text-slate-600">Miembros activos</span>
+                  <span class="font-semibold text-lg text-slate-800">{{ dashboard()!.activeMembers }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Suscripciones activas</span>
-                  <span class="font-semibold text-lg">{{ dashboard()!.activeSubscriptions }}</span>
+                  <span class="text-slate-600">Suscripciones activas</span>
+                  <span class="font-semibold text-lg text-slate-800">{{ dashboard()!.activeSubscriptions }}</span>
                 </div>
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-600">Check-ins hoy</span>
-                  <span class="font-semibold text-lg">{{ dashboard()!.todayCheckIns }}</span>
+                  <span class="text-slate-600">Check-ins hoy</span>
+                  <span class="font-semibold text-lg text-slate-800">{{ dashboard()!.todayCheckIns }}</span>
                 </div>
                 <mat-divider></mat-divider>
                 <div class="flex justify-between items-center">
-                  <span class="text-gray-600 font-medium">Ingresos hoy</span>
-                  <span class="font-semibold text-lg text-green-600">{{ '$' + (dashboard()!.todayIncome | number:'1.2-2') }}</span>
+                  <span class="text-slate-600 font-medium">Ingresos hoy</span>
+                  <span class="font-semibold text-lg text-emerald-600">{{ '$' + (dashboard()!.todayIncome | number:'1.2-2') }}</span>
                 </div>
               </div>
             </mat-card-content>
@@ -158,12 +158,14 @@ export class DashboardComponent implements OnInit {
       labels.push(new Date(day.date).toLocaleDateString('es', { weekday: 'short', day: 'numeric' }));
       values.push(day.total);
     }
+    const style = getComputedStyle(document.documentElement);
+    const primary = style.getPropertyValue('--color-primary').trim() || '#4F46E5';
     return {
       labels,
       datasets: [{
         label: 'Ingresos',
         data: values,
-        backgroundColor: '#667eea',
+        backgroundColor: primary,
         borderRadius: 6,
       }],
     };

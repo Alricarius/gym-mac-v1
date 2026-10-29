@@ -23,7 +23,7 @@ import { ReportService, IncomeReport } from '../../services/report.service';
   providers: [DatePipe],
   template: `
     <div class="p-8">
-      <h1 class="text-2xl font-medium text-gray-800 mb-6">Reporte de Ingresos</h1>
+      <h1 class="text-2xl font-medium text-slate-800 mb-6">Reporte de Ingresos</h1>
 
       @if (errorMessage) {
         <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center gap-2">
@@ -68,7 +68,7 @@ import { ReportService, IncomeReport } from '../../services/report.service';
       @if (isLoading) {
         <div class="flex justify-center items-center py-12">
           <mat-spinner diameter="40"></mat-spinner>
-          <span class="ml-3 text-gray-500">Cargando...</span>
+          <span class="ml-3 text-slate-500">Cargando...</span>
         </div>
       }
 
@@ -77,7 +77,7 @@ import { ReportService, IncomeReport } from '../../services/report.service';
           <mat-card-content class="p-5">
             <div class="flex justify-between items-center mb-4">
               <h2 class="text-lg font-medium">Resultados</h2>
-              <p class="text-lg font-bold text-green-600">
+              <p class="text-lg font-bold text-emerald-600">
                 Total: {{ '$' + (report.total | number:'1.2-2') }}
               </p>
             </div>
@@ -86,7 +86,7 @@ import { ReportService, IncomeReport } from '../../services/report.service';
               <div class="overflow-x-auto">
                 <table class="w-full">
                   <thead>
-                    <tr class="border-b text-sm text-gray-500">
+                    <tr class="border-b text-sm text-slate-500">
                       <th class="text-left py-3 px-2">Fecha</th>
                       <th class="text-right py-3 px-2">Transacciones</th>
                       <th class="text-right py-3 px-2">Total</th>
@@ -94,7 +94,7 @@ import { ReportService, IncomeReport } from '../../services/report.service';
                   </thead>
                   <tbody>
                     @for (row of report.data; track row.date) {
-                      <tr class="border-b last:border-b-0 hover:bg-gray-50">
+                      <tr class="border-b last:border-b-0 hover:bg-slate-50">
                         <td class="py-3 px-2">{{ row.date | date:'fullDate' }}</td>
                         <td class="text-right py-3 px-2">{{ row.count }}</td>
                         <td class="text-right py-3 px-2 font-medium">{{ '$' + (row.total | number:'1.2-2') }}</td>
@@ -104,7 +104,7 @@ import { ReportService, IncomeReport } from '../../services/report.service';
                 </table>
               </div>
             } @else {
-              <p class="text-gray-400 text-center py-8">No se encontraron ingresos en este período</p>
+              <p class="text-slate-400 text-center py-8">No se encontraron ingresos en este período</p>
             }
           </mat-card-content>
         </mat-card>

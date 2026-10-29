@@ -1,18 +1,19 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
 import { UserService, SystemUser, CreateUserDto } from '../../services/user.service';
 import { AuthStore } from '../../../auth/services/auth.store';
 
 @Component({
   selector: 'app-user-form',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MatButtonModule],
   template: `
     <div class="page">
       <div class="page-header">
         <h1>{{ isEdit ? 'Editar usuario' : 'Nuevo usuario' }}</h1>
-        <button class="btn-secondary" (click)="cancel()">Volver</button>
+        <button mat-stroked-button (click)="cancel()">Volver</button>
       </div>
 
       <div class="card">
@@ -49,8 +50,8 @@ import { AuthStore } from '../../../auth/services/auth.store';
           }
 
           <div class="form-actions">
-            <button type="button" class="btn-secondary" (click)="cancel()">Cancelar</button>
-            <button type="submit" class="btn-primary" [disabled]="submitting">
+            <button mat-stroked-button type="button" (click)="cancel()">Cancelar</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
               {{ submitting ? 'Guardando...' : 'Guardar' }}
             </button>
           </div>
@@ -61,21 +62,16 @@ import { AuthStore } from '../../../auth/services/auth.store';
   styles: [`
     .page { padding: 24px; max-width: 720px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
-    .card { background: white; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); padding: 24px; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
+    .card { background: var(--color-surface); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 24px; }
     .form-row { display: flex; gap: 16px; }
     .form-row .form-group { flex: 1; }
     .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #333; }
-    input, select { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
-    input:focus, select:focus { outline: none; border-color: #667eea; }
-    .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
-    .btn-primary { padding: 10px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover:not(:disabled) { background: #5a6fd6; }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .btn-secondary { padding: 10px 24px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-    .btn-secondary:hover { background: #f5f5f5; }
+    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--color-text-heading); }
+    input, select { width: 100%; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
+    input:focus, select:focus { outline: none; border-color: var(--color-primary); }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
   `],
 })
 export class UserFormComponent implements OnInit {

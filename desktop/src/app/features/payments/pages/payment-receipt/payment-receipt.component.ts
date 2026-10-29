@@ -84,21 +84,21 @@ import { PaymentService, Receipt } from '../../services/payment.service';
   styles: [`
     .page { padding: 24px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
     .header-actions { display: flex; gap: 12px; }
-    .loading { text-align: center; color: #999; padding: 40px; }
-    .error-msg { color: #e74c3c; background: #fdecea; padding: 10px 14px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-    .btn-primary { padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover { background: #5a6fd6; }
-    .btn-secondary { padding: 10px 20px; background: white; color: #666; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; }
-    .btn-secondary:hover { background: #f5f5f5; }
+    .loading { text-align: center; color: var(--color-text-muted); padding: 40px; }
+    .error-msg { color: var(--color-error-text); background: var(--color-error-bg); padding: 10px 14px; border-radius: var(--radius-md); font-size: 13px; margin-bottom: 16px; }
+    .btn-primary { padding: 10px 20px; background: var(--color-primary); color: white; border: none; border-radius: var(--radius-md); cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-secondary { padding: 10px 20px; background: white; color: var(--color-text-secondary); border: 1px solid var(--color-border); border-radius: var(--radius-md); cursor: pointer; font-size: 14px; transition: all 0.2s; }
+    .btn-secondary:hover { background: var(--color-surface-hover); }
 
     .receipt {
       max-width: 500px;
       margin: 0 auto;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      background: var(--color-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
       padding: 32px;
     }
 
@@ -106,18 +106,18 @@ import { PaymentService, Receipt } from '../../services/payment.service';
       text-align: center;
       margin-bottom: 24px;
       padding-bottom: 16px;
-      border-bottom: 2px solid #f0f0f0;
+      border-bottom: 2px solid var(--color-border);
     }
 
     .receipt-header h2 {
       margin: 0;
       font-size: 24px;
-      color: #1a1a2e;
+      color: var(--color-text-primary);
     }
 
     .receipt-subtitle {
       margin: 4px 0 0;
-      color: #999;
+      color: var(--color-text-secondary);
       font-size: 14px;
     }
 
@@ -133,19 +133,19 @@ import { PaymentService, Receipt } from '../../services/payment.service';
     }
 
     .receipt-row .label {
-      color: #666;
+      color: var(--color-text-secondary);
       font-weight: 500;
     }
 
     .receipt-row .value {
-      color: #1a1a2e;
+      color: var(--color-text-primary);
       text-align: right;
     }
 
     .receipt-row.total .value {
       font-size: 18px;
       font-weight: 700;
-      color: #2e7d32;
+      color: var(--color-success-text);
     }
 
     .receipt-row.total .label {
@@ -154,15 +154,15 @@ import { PaymentService, Receipt } from '../../services/payment.service';
     }
 
     .receipt-divider {
-      border-top: 1px dashed #ddd;
+      border-top: 1px dashed var(--color-border);
       margin: 8px 0;
     }
 
     .receipt-footer {
       text-align: center;
       padding-top: 16px;
-      border-top: 2px solid #f0f0f0;
-      color: #999;
+      border-top: 2px solid var(--color-border);
+      color: var(--color-text-secondary);
       font-size: 13px;
     }
 

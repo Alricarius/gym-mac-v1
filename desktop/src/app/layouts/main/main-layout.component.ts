@@ -22,15 +22,16 @@ import { BranchStore } from '../../core/services/branch-store.service';
   ],
   template: `
     <div class="flex h-screen">
-      <aside class="w-60 bg-gray-900 text-white flex flex-col">
-        <mat-toolbar class="bg-gray-900 text-white border-b border-white/10">
+      <aside class="w-60 bg-slate-800 text-white flex flex-col">
+        <mat-toolbar class="bg-slate-800 text-white border-b border-white/10">
           <span class="text-lg font-medium">GymAdmin</span>
         </mat-toolbar>
 
         @if (branchStore.branches().length > 0) {
           <div class="px-3 pt-3 pb-1">
             <mat-form-field appearance="fill" class="w-full !mb-0" subscriptSizing="dynamic">
-              <mat-select [value]="branchStore.selectedBranch()?.id"
+              <mat-select panelClass="sidebar-branch-panel"
+                          [value]="branchStore.selectedBranch()?.id"
                           (selectionChange)="onBranchChange($event.value)"
                           class="!text-white !text-sm">
                 @for (b of branchStore.branches(); track b.id) {
@@ -43,74 +44,74 @@ import { BranchStore } from '../../core/services/branch-store.service';
 
         <mat-nav-list class="flex-1 px-3 pt-2">
           <a mat-list-item routerLink="/dashboard" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">dashboard</mat-icon>
             <span>Dashboard</span>
           </a>
           <a mat-list-item routerLink="/members" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">people</mat-icon>
             <span>Miembros</span>
           </a>
           <a mat-list-item routerLink="/plans" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">subscriptions</mat-icon>
             <span>Planes</span>
           </a>
           <a mat-list-item routerLink="/subscriptions" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">assignment</mat-icon>
             <span>Suscripciones</span>
           </a>
           <a mat-list-item routerLink="/classes" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">fitness_center</mat-icon>
             <span>Clases</span>
           </a>
           <a mat-list-item routerLink="/bookings" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">calendar_month</mat-icon>
             <span>Reservas</span>
           </a>
           <a mat-list-item routerLink="/check-in" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">login</mat-icon>
             <span>Check-in</span>
           </a>
           <a mat-list-item routerLink="/payments" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">payments</mat-icon>
             <span>Pagos</span>
           </a>
           <a mat-list-item routerLink="/inventory" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">inventory_2</mat-icon>
             <span>Inventario</span>
           </a>
           <a mat-list-item routerLink="/branches" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">store</mat-icon>
             <span>Sucursales</span>
           </a>
           <a mat-list-item routerLink="/reports" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">bar_chart</mat-icon>
             <span>Reportes</span>
           </a>
           @if (authStore.user()?.role === 'admin') {
             <a mat-list-item routerLink="/users" routerLinkActive="active"
-               class="text-white/70 hover:text-white rounded-lg mb-0.5">
+               class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
               <mat-icon class="mr-3 text-lg">manage_accounts</mat-icon>
               <span>Usuarios</span>
             </a>
             <a mat-list-item routerLink="/settings" routerLinkActive="active"
-               class="text-white/70 hover:text-white rounded-lg mb-0.5">
+               class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
               <mat-icon class="mr-3 text-lg">settings</mat-icon>
               <span>Configuración</span>
             </a>
           }
           <a mat-list-item routerLink="/notifications" routerLinkActive="active"
-             class="text-white/70 hover:text-white rounded-lg mb-0.5">
+             class="text-white hover:bg-white hover:text-slate-900 hover:font-medium transition-all duration-150 rounded-lg mb-0.5">
             <mat-icon class="mr-3 text-lg">notifications</mat-icon>
             <span>Notificaciones</span>
           </a>
@@ -124,18 +125,33 @@ import { BranchStore } from '../../core/services/branch-store.service';
           </button>
         </div>
       </aside>
-      <main class="flex-1 bg-gray-50 overflow-y-auto">
+      <main class="flex-1 bg-slate-50 overflow-y-auto">
         <router-outlet />
       </main>
     </div>
   `,
   styles: [`
-    .active { background: rgba(255,255,255,0.1) !important; color: white !important; }
+    .active { background: white !important; color: #0F172A !important; font-weight: 500 !important; }
+    .active mat-icon { color: #0F172A !important; }
     .mdc-list-item { border-radius: 8px !important; }
     :host ::ng-deep .mat-mdc-select-value-text { color: white !important; }
-    :host ::ng-deep .mat-mdc-select-arrow { color: rgba(255,255,255,0.7) !important; }
+    :host ::ng-deep .mat-mdc-select-arrow { color: var(--color-sidebar-text-muted) !important; font-size: 20px; }
     :host ::ng-deep .mdc-line-ripple { display: none; }
     :host ::ng-deep .mat-mdc-form-field-focus-overlay { background: transparent; }
+
+    ::ng-deep .sidebar-branch-panel { background: #1E293B !important; }
+    ::ng-deep .sidebar-branch-panel .mat-mdc-option {
+      color: #E2E8F0 !important;
+      transition: background 0.15s, color 0.15s;
+    }
+    ::ng-deep .sidebar-branch-panel .mat-mdc-option:hover {
+      background: #334155 !important;
+      color: white !important;
+    }
+    ::ng-deep .sidebar-branch-panel .mat-mdc-option.mdc-list-item--selected {
+      background: #334155 !important;
+      color: white !important;
+    }
   `],
 })
 export class MainLayoutComponent implements OnInit {

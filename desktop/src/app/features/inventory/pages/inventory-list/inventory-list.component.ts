@@ -43,23 +43,23 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
-                <tr class="border-b border-gray-200">
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Nombre</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Descripción</th>
-                  <th class="text-center font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Total</th>
-                  <th class="text-center font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Disponible</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Préstamos activos</th>
-                  <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
+                <tr class="border-b border-slate-200">
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Nombre</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Descripción</th>
+                  <th class="text-center font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Total</th>
+                  <th class="text-center font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Disponible</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Estado</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Préstamos activos</th>
+                  <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-3 px-4">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 @for (item of items(); track item.id) {
-                  <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                    <td class="py-3 px-4 font-medium text-gray-800">{{ item.name }}</td>
-                    <td class="py-3 px-4 text-gray-500 max-w-xs truncate">{{ item.description || '-' }}</td>
-                    <td class="py-3 px-4 text-center text-gray-500">{{ item.totalQuantity }}</td>
-                    <td class="py-3 px-4 text-center text-gray-500">{{ item.availableQuantity }}</td>
+                  <tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                    <td class="py-3 px-4 font-medium text-slate-800">{{ item.name }}</td>
+                    <td class="py-3 px-4 text-slate-500 max-w-xs truncate">{{ item.description || '-' }}</td>
+                    <td class="py-3 px-4 text-center text-slate-500">{{ item.totalQuantity }}</td>
+                    <td class="py-3 px-4 text-center text-slate-500">{{ item.availableQuantity }}</td>
                     <td class="py-3 px-4">
                       <span class="badge badge-{{ getStockClass(item) }}">
                         {{ getStockLabel(item) }}
@@ -67,19 +67,19 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
                     </td>
                     <td class="py-3 px-4">
                       @if (getItemActiveLoans(item).length > 0) {
-                        <span class="text-xs text-gray-500">
+                        <span class="text-xs text-slate-500">
                           @for (loan of getItemActiveLoans(item); track loan.id; let last = $last) {
                             {{ loan.member.fullName }}{{ last ? '' : ', ' }}
                           }
                         </span>
                       } @else {
-                        <span class="text-xs text-gray-400">-</span>
+                        <span class="text-xs text-slate-500">-</span>
                       }
                     </td>
                     <td class="py-3 px-4">
-                      <button mat-stroked-button class="!mr-1 !mb-1" (click)="edit(item)">Editar</button>
+                      <button mat-stroked-button class="!mr-2 !mb-1" (click)="edit(item)">Editar</button>
                       @if (item.availableQuantity > 0) {
-                        <button mat-stroked-button color="primary" class="!mr-1 !mb-1" (click)="loanItem(item)">Prestar</button>
+                        <button mat-stroked-button color="primary" class="!mr-2 !mb-1" (click)="loanItem(item)">Prestar</button>
                       }
                       @if (hasActiveLoans(item)) {
                         <button mat-stroked-button class="!mb-1" (click)="showReturnOptions(item)">Devolver</button>
@@ -87,18 +87,18 @@ import { BranchStore } from '../../../../core/services/branch-store.service';
                     </td>
                   </tr>
                   @if (returnItemId() === item.id) {
-                    <tr class="bg-gray-50">
+                    <tr class="bg-slate-50">
                       <td colspan="7" class="py-3 px-4">
                         <div class="flex items-center gap-3">
-                          <span class="text-sm font-medium text-gray-600">Devolver a quién?</span>
-                          <select class="border border-gray-300 rounded-lg px-3 py-2 text-sm" #returnSelect>
+                          <span class="text-sm font-medium text-slate-600">Devolver a quién?</span>
+                          <select class="border border-slate-300 rounded-lg px-3 py-2 text-sm" #returnSelect>
                             @for (loan of getItemActiveLoans(item); track loan.id) {
                               <option [value]="loan.id">
                                 {{ loan.member.fullName }} ({{ loan.quantity }}x)
                               </option>
                             }
                           </select>
-                          <button mat-flat-button color="primary" (click)="confirmReturn(item.id, returnSelect.value)">
+                          <button mat-raised-button color="primary" (click)="confirmReturn(item.id, returnSelect.value)">
                             Confirmar devolución
                           </button>
                           <button mat-stroked-button (click)="cancelReturn()">Cancelar</button>

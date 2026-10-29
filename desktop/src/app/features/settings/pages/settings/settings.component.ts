@@ -48,16 +48,16 @@ const DAY_LABELS: Record<string, string> = {
                 <h2>Horarios de atención</h2>
                 <table class="w-full text-sm">
                   <thead>
-                    <tr class="border-b border-gray-200">
-                      <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-2 pr-4">Día</th>
-                      <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-2 pr-4">Apertura</th>
-                      <th class="text-left font-semibold text-gray-500 uppercase text-xs tracking-wider py-2">Cierre</th>
+                    <tr class="border-b border-slate-200">
+                      <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-2 pr-4">Día</th>
+                      <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-2 pr-4">Apertura</th>
+                      <th class="text-left font-semibold text-slate-500 uppercase text-xs tracking-wider py-2">Cierre</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (day of days; track day) {
-                      <tr class="border-b border-gray-100">
-                        <td class="py-2 pr-4 font-medium text-gray-700">{{ dayLabel(day) }}</td>
+                      <tr class="border-b border-slate-100">
+                        <td class="py-2 pr-4 font-medium text-slate-700">{{ dayLabel(day) }}</td>
                         <td class="py-2 pr-4">
                           <input type="time" class="input-time"
                             [ngModel]="openTime(day)" (ngModelChange)="setOpenTime(day, $event)" name="open_{{day}}" />
@@ -110,7 +110,7 @@ const DAY_LABELS: Record<string, string> = {
               }
 
               <div class="form-actions">
-                <button type="submit" class="btn-primary" [disabled]="submitting">
+                <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
                   {{ submitting ? 'Guardando...' : 'Guardar configuración' }}
                 </button>
               </div>
@@ -123,24 +123,21 @@ const DAY_LABELS: Record<string, string> = {
   styles: [`
     .page { padding: 24px; max-width: 860px; }
     .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
-    .page-header h1 { margin: 0; font-size: 22px; color: #1a1a2e; }
+    .page-header h1 { margin: 0; font-size: 22px; color: var(--color-text-primary); }
     .form-section { margin-bottom: 28px; }
-    .form-section h2 { font-size: 16px; font-weight: 600; color: #333; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+    .form-section h2 { font-size: 16px; font-weight: 600; color: var(--color-text-heading); margin: 0 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--color-border); }
     .form-row { display: flex; gap: 16px; }
     .form-row .form-group { flex: 1; }
     .form-group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: #333; }
-    input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
-    input:focus, select:focus, textarea:focus { outline: none; border-color: #667eea; }
-    .input-time { width: auto; padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; }
+    label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--color-text-heading); }
+    input, select, textarea { width: 100%; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-md); font-size: 14px; box-sizing: border-box; transition: border-color 0.2s; font-family: inherit; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--color-primary); }
+    .input-time { width: 100%; padding: 6px 10px; border: 1px solid var(--color-border); border-radius: 6px; font-size: 13px; }
     textarea { resize: vertical; }
-    .error-msg { color: #e74c3c; font-size: 13px; margin-bottom: 16px; }
-    .success-msg { color: #27ae60; font-size: 13px; margin-bottom: 16px; }
-    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 8px; }
-    .btn-primary { padding: 10px 24px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: background 0.2s; }
-    .btn-primary:hover:not(:disabled) { background: #5a6fd6; }
-    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-    .loading { text-align: center; padding: 40px; color: #999; }
+    .error-msg { color: var(--color-error-text); font-size: 13px; margin-bottom: 16px; }
+    .success-msg { color: var(--color-success-text); font-size: 13px; margin-bottom: 16px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+    .loading { text-align: center; padding: 40px; color: var(--color-text-secondary); }
   `],
 })
 export class SettingsComponent implements OnInit {
